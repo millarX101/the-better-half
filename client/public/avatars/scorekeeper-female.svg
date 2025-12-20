@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="scorekeeperBgF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#6366f1"/>
+    </linearGradient>
+    <linearGradient id="skinTone3F" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c68642"/>
+      <stop offset="100%" style="stop-color:#a56b3a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#scorekeeperBgF)"/>
+  
+  <!-- Long straight hair behind -->
+  <path d="M35 70 Q30 120 40 170 Q60 195 100 198 Q140 195 160 170 Q170 120 165 70" fill="#1a1a2e"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="105" rx="48" ry="52" fill="url(#skinTone3F)"/>
+  
+  <!-- Hair - sleek, professional -->
+  <ellipse cx="100" cy="58" rx="52" ry="28" fill="#1a1a2e"/>
+  <!-- Side parts -->
+  <path d="M48 60 Q42 90 45 130" stroke="#1a1a2e" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <path d="M152 60 Q158 90 155 130" stroke="#1a1a2e" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <!-- Sleek side-swept look -->
+  <path d="M50 55 Q80 50 100 55 Q85 60 70 58" fill="#252540"/>
+  
+  <!-- Stylish cat-eye glasses -->
+  <path d="M55 95 L55 115 Q55 120 65 120 L85 120 Q92 120 92 112 L92 95 Q92 88 85 88 L65 88 Q55 88 55 95" fill="none" stroke="#4a4a6a" stroke-width="3"/>
+  <path d="M108 95 L108 115 Q108 120 118 120 L138 120 Q148 120 148 112 L148 95 Q148 88 138 88 L118 88 Q108 88 108 95" fill="none" stroke="#4a4a6a" stroke-width="3"/>
+  <!-- Cat eye wing -->
+  <path d="M55 92 L48 88" stroke="#4a4a6a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M145 92 L152 88" stroke="#4a4a6a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="92" y1="100" x2="108" y2="100" stroke="#4a4a6a" stroke-width="3"/>
+  
+  <!-- Eyes behind glasses -->
+  <ellipse cx="73" cy="102" rx="10" ry="8" fill="white"/>
+  <ellipse cx="127" cy="102" rx="10" ry="8" fill="white"/>
+  
+  <!-- Pupils - sharp, knowing -->
+  <ellipse cx="75" cy="102" rx="5" ry="6" fill="#2d1b0e"/>
+  <ellipse cx="129" cy="102" rx="5" ry="6" fill="#2d1b0e"/>
+  <circle cx="77" cy="100" r="2" fill="white"/>
+  <circle cx="131" cy="100" r="2" fill="white"/>
+  
+  <!-- Defined eyebrows - one raised -->
+  <path d="M58 82 Q73 77 90 83" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M110 80 Q127 75 142 81" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Nose -->
+  <path d="M100 100 L100 118 Q97 122 100 122 Q103 122 100 118" stroke="#8a5a30" stroke-width="2" fill="none"/>
+  
+  <!-- Knowing smirk with lipstick -->
+  <path d="M82 138 Q100 145 118 138" stroke="#8b3a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M118 138 Q122 136 125 138" stroke="#8b3a3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Lipstick shine -->
+  <path d="M90 137 Q100 140 110 137" stroke="#a85050" stroke-width="2" fill="none" opacity="0.5"/>
+  
+  <!-- Pearl earrings -->
+  <circle cx="45" cy="108" r="5" fill="#f5f5f0"/>
+  <circle cx="46" cy="106" r="2" fill="white" opacity="0.8"/>
+  <circle cx="155" cy="108" r="5" fill="#f5f5f0"/>
+  <circle cx="156" cy="106" r="2" fill="white" opacity="0.8"/>
+  
+  <!-- Notepad with receipts -->
+  <rect x="18" y="145" width="28" height="38" rx="2" fill="#fff5e6" stroke="#ccc" stroke-width="1"/>
+  <line x1="22" y1="154" x2="42" y2="154" stroke="#999" stroke-width="1"/>
+  <line x1="22" y1="161" x2="42" y2="161" stroke="#999" stroke-width="1"/>
+  <line x1="22" y1="168" x2="38" y2="168" stroke="#999" stroke-width="1"/>
+  
+  <!-- Checkmarks -->
+  <path d="M25 154 L28 157 L36 150" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M25 161 L28 164 L36 157" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Manicured nail holding pen -->
+  <ellipse cx="50" cy="168" rx="6" ry="4" fill="url(#skinTone3F)"/>
+  <rect x="52" y="158" width="3" height="20" fill="#2d2d2d" transform="rotate(-15, 53, 168)"/>
+  <ellipse cx="50" cy="168" rx="4" ry="2.5" fill="#8b3a3a"/>
+</svg>

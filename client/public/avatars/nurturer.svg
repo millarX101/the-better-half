@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="nurturerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899"/>
+      <stop offset="100%" style="stop-color:#f43f5e"/>
+    </linearGradient>
+    <linearGradient id="skinTone2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#deb896"/>
+      <stop offset="100%" style="stop-color:#c9a080"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#nurturerBg)"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="105" rx="52" ry="58" fill="url(#skinTone2)"/>
+  
+  <!-- Hair (soft waves) -->
+  <ellipse cx="100" cy="60" rx="60" ry="35" fill="#2d1f14"/>
+  <path d="M40 70 Q35 100 45 130" stroke="#2d1f14" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <path d="M160 70 Q165 100 155 130" stroke="#2d1f14" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <ellipse cx="100" cy="50" rx="50" ry="25" fill="#3d2a1c"/>
+  
+  <!-- Concerned/caring eyes -->
+  <ellipse cx="75" cy="100" rx="14" ry="12" fill="white"/>
+  <ellipse cx="125" cy="100" rx="14" ry="12" fill="white"/>
+  
+  <!-- Pupils (soft, caring look) -->
+  <circle cx="77" cy="101" r="7" fill="#4a3520"/>
+  <circle cx="127" cy="101" r="7" fill="#4a3520"/>
+  <circle cx="79" cy="99" r="2.5" fill="white"/>
+  <circle cx="129" cy="99" r="2.5" fill="white"/>
+  
+  <!-- Eyebrows (slightly worried/concerned) -->
+  <path d="M60 85 Q75 82 88 88" stroke="#3d2a1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M112 88 Q125 82 140 85" stroke="#3d2a1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Nose -->
+  <path d="M100 98 L100 115 Q96 118 100 119 Q104 118 100 115" stroke="#b8967a" stroke-width="2" fill="none"/>
+  
+  <!-- Mouth (gentle, slightly pursed - about to sigh) -->
+  <ellipse cx="100" cy="138" rx="12" ry="6" fill="#c47d7d"/>
+  <path d="M88 138 Q100 142 112 138" stroke="#a86060" stroke-width="1" fill="none"/>
+  
+  <!-- Blush (caring warmth) -->
+  <ellipse cx="60" cy="115" rx="10" ry="6" fill="#e8a0a0" opacity="0.4"/>
+  <ellipse cx="140" cy="115" rx="10" ry="6" fill="#e8a0a0" opacity="0.4"/>
+  
+  <!-- Heart (small, caring) -->
+  <path d="M155 55 C155 50 160 48 163 52 C166 48 171 50 171 55 C171 62 163 68 163 68 C163 68 155 62 155 55" fill="#fff" opacity="0.8"/>
+  
+  <!-- Hand on chin (thinking/concerned pose) -->
+  <ellipse cx="135" cy="155" rx="15" ry="12" fill="url(#skinTone2)"/>
+  <path d="M125 150 Q130 145 140 148" stroke="#b8967a" stroke-width="1" fill="none"/>
+</svg>

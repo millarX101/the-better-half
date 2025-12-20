@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Better Half - All Avatars Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: white;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 40px 0 20px;
+      color: #f472b6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      overflow: hidden;
+      border: 4px solid rgba(255,255,255,0.1);
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    .title {
+      color: #f472b6;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    .description {
+      color: #94a3b8;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    .gender-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      margin-top: 10px;
+    }
+    .male { background: #3b82f6; }
+    .female { background: #ec4899; }
+    .divider {
+      max-width: 1000px;
+      margin: 30px auto;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎭 The Better Half</h1>
+  <p class="subtitle">All Avatar Variants - Male (Husband) & Female (Wife) Versions</p>
+  
+  <h3 class="section-title">👨 Husband Mode</h3>
+  <div class="grid">
+    <div class="card">
+      <div class="avatar"><img src="realist.svg" alt="The Realist"></div>
+      <h2>The Realist</h2>
+      <p class="title">Seen Your Shit Before</p>
+      <p class="description">Tired, holding coffee, over it</p>
+      <span class="gender-badge male">Husband</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="nurturer.svg" alt="The Nurturer"></div>
+      <h2>The Nurturer</h2>
+      <p class="title">Disappointed, Not Angry</p>
+      <p class="description">Caring but concerned</p>
+      <span class="gender-badge male">Husband</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="scorekeeper.svg" alt="The Scorekeeper"></div>
+      <h2>The Scorekeeper</h2>
+      <p class="title">Remembers Everything</p>
+      <p class="description">Glasses, notepad, receipts</p>
+      <span class="gender-badge male">Husband</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="alien.svg" alt="Zyx-9"></div>
+      <h2>Zyx-9</h2>
+      <p class="title">The Alien Observer</p>
+      <p class="description">Three eyes, tentacles, smug</p>
+      <span class="gender-badge male">Husband</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 class="section-title">👩 Wife Mode</h3>
+  <div class="grid">
+    <div class="card">
+      <div class="avatar"><img src="realist-female.svg" alt="The Realist"></div>
+      <h2>The Realist</h2>
+      <p class="title">Seen Your Shit Before</p>
+      <p class="description">Messy bun, wine glass, tired eyes</p>
+      <span class="gender-badge female">Wife</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="nurturer-female.svg" alt="The Nurturer"></div>
+      <h2>The Nurturer</h2>
+      <p class="title">Disappointed, Not Angry</p>
+      <p class="description">Soft waves, heart necklace, caring</p>
+      <span class="gender-badge female">Wife</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="scorekeeper-female.svg" alt="The Scorekeeper"></div>
+      <h2>The Scorekeeper</h2>
+      <p class="title">Remembers Everything</p>
+      <p class="description">Cat-eye glasses, pearls, manicured</p>
+      <span class="gender-badge female">Wife</span>
+    </div>
+    <div class="card">
+      <div class="avatar"><img src="alien-female.svg" alt="Zyx-9"></div>
+      <h2>Zyx-9</h2>
+      <p class="title">The Alien Observer</p>
+      <p class="description">Elegant lashes, tiara, glamorous</p>
+      <span class="gender-badge female">Wife</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+  
+  <p style="text-align: center; color: #64748b; margin-top: 30px; font-size: 0.85rem;">
+    Avatars switch automatically based on Partner Setup settings (Wife/Husband/Partner mode)
+  </p>
+</body>
+</html>

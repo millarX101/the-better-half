@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="realistBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#ef4444"/>
+    </linearGradient>
+    <linearGradient id="skinTone" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd5b8"/>
+      <stop offset="100%" style="stop-color:#e8b796"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#realistBg)"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="105" rx="55" ry="60" fill="url(#skinTone)"/>
+  
+  <!-- Hair (messy, tired) -->
+  <path d="M45 75 Q50 40 100 35 Q150 40 155 75 Q155 55 140 50 Q120 45 100 48 Q80 45 60 50 Q45 55 45 75" fill="#4a3728"/>
+  <path d="M50 70 Q55 60 70 58" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M150 70 Q145 60 130 58" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Tired eyes with bags -->
+  <ellipse cx="75" cy="100" rx="15" ry="10" fill="white"/>
+  <ellipse cx="125" cy="100" rx="15" ry="10" fill="white"/>
+  
+  <!-- Pupils (looking slightly up/exhausted) -->
+  <circle cx="75" cy="98" r="6" fill="#3d2314"/>
+  <circle cx="125" cy="98" r="6" fill="#3d2314"/>
+  <circle cx="77" cy="96" r="2" fill="white"/>
+  <circle cx="127" cy="96" r="2" fill="white"/>
+  
+  <!-- Eye bags (the exhaustion) -->
+  <path d="M62 108 Q75 115 88 108" stroke="#d4a088" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M112 108 Q125 115 138 108" stroke="#d4a088" stroke-width="2" fill="none" opacity="0.7"/>
+  
+  <!-- Eyebrows (slightly raised, "really?") -->
+  <path d="M60 82 Q75 78 90 84" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M110 84 Q125 78 140 82" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Nose -->
+  <path d="M100 100 L100 118 Q95 122 100 122 Q105 122 100 118" stroke="#d4a088" stroke-width="2" fill="none"/>
+  
+  <!-- Mouth (flat, unimpressed line with slight smirk) -->
+  <path d="M80 138 Q100 142 120 138" stroke="#b8756f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M120 138 Q125 136 128 138" stroke="#b8756f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Coffee cup (essential) -->
+  <rect x="145" y="150" width="25" height="30" rx="3" fill="#8B4513"/>
+  <ellipse cx="157" cy="150" rx="12" ry="4" fill="#6B3410"/>
+  <path d="M170 158 Q180 160 178 170 Q175 175 170 172" stroke="#8B4513" stroke-width="3" fill="none"/>
+  <path d="M150 145 Q155 140 160 145" stroke="#888" stroke-width="2" fill="none" opacity="0.5"/>
+</svg>

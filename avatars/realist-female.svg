@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="realistBgF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#ef4444"/>
+    </linearGradient>
+    <linearGradient id="skinToneF" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd5b8"/>
+      <stop offset="100%" style="stop-color:#e8b796"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#realistBgF)"/>
+  
+  <!-- Long hair behind -->
+  <ellipse cx="100" cy="120" rx="70" ry="75" fill="#3d2314"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="100" rx="50" ry="55" fill="url(#skinToneF)"/>
+  
+  <!-- Hair - messy bun / tired mom hair -->
+  <ellipse cx="100" cy="50" rx="55" ry="30" fill="#4a3728"/>
+  <circle cx="100" cy="35" r="25" fill="#4a3728"/>
+  <ellipse cx="100" cy="30" rx="20" ry="15" fill="#3d2314"/>
+  <!-- Loose strands -->
+  <path d="M45 70 Q40 90 45 110" stroke="#4a3728" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M155 70 Q160 90 155 110" stroke="#4a3728" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M50 85 Q45 75 50 65" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M150 85 Q155 75 150 65" stroke="#4a3728" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Tired eyes with bags -->
+  <ellipse cx="75" cy="95" rx="14" ry="10" fill="white"/>
+  <ellipse cx="125" cy="95" rx="14" ry="10" fill="white"/>
+  
+  <!-- Pupils -->
+  <circle cx="75" cy="94" r="6" fill="#3d2314"/>
+  <circle cx="125" cy="94" r="6" fill="#3d2314"/>
+  <circle cx="77" cy="92" r="2" fill="white"/>
+  <circle cx="127" cy="92" r="2" fill="white"/>
+  
+  <!-- Eye bags -->
+  <path d="M63 103 Q75 109 87 103" stroke="#d4a088" stroke-width="2" fill="none" opacity="0.6"/>
+  <path d="M113 103 Q125 109 137 103" stroke="#d4a088" stroke-width="2" fill="none" opacity="0.6"/>
+  
+  <!-- Eyebrows - slightly raised "really?" -->
+  <path d="M60 80 Q75 76 88 82" stroke="#4a3728" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M112 82 Q125 76 140 80" stroke="#4a3728" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Eyelashes -->
+  <path d="M62 90 L58 86" stroke="#3d2314" stroke-width="2" stroke-linecap="round"/>
+  <path d="M66 88 L64 83" stroke="#3d2314" stroke-width="2" stroke-linecap="round"/>
+  <path d="M138 90 L142 86" stroke="#3d2314" stroke-width="2" stroke-linecap="round"/>
+  <path d="M134 88 L136 83" stroke="#3d2314" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Nose -->
+  <path d="M100 95 L100 112 Q96 116 100 116 Q104 116 100 112" stroke="#d4a088" stroke-width="2" fill="none"/>
+  
+  <!-- Mouth - unimpressed -->
+  <path d="M82 132 Q100 136 118 132" stroke="#c47070" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M118 132 Q122 130 125 132" stroke="#c47070" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Light lipstick -->
+  <path d="M85 132 Q100 138 115 132" stroke="#d4878a" stroke-width="2" fill="none" opacity="0.5"/>
+  
+  <!-- Wine glass (essential for tired wife) -->
+  <ellipse cx="160" cy="155" rx="12" ry="5" fill="none" stroke="#fff" stroke-width="2" opacity="0.8"/>
+  <path d="M160 160 L160 175" stroke="#fff" stroke-width="2" opacity="0.8"/>
+  <ellipse cx="160" cy="178" rx="8" ry="3" fill="none" stroke="#fff" stroke-width="2" opacity="0.8"/>
+  <ellipse cx="160" cy="155" rx="10" ry="8" fill="#722f37" opacity="0.7"/>
+  
+  <!-- Earrings -->
+  <circle cx="48" cy="105" r="4" fill="#ffd700" opacity="0.8"/>
+  <circle cx="152" cy="105" r="4" fill="#ffd700" opacity="0.8"/>
+</svg>

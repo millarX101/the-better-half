@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="alienBgF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <linearGradient id="alienSkinF" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#b8f0d8"/>
+      <stop offset="100%" style="stop-color:#8ad4b5"/>
+    </linearGradient>
+    <radialGradient id="glowF" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#fff;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#fff;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#alienBgF)"/>
+  
+  <!-- Glow effect -->
+  <circle cx="100" cy="100" r="85" fill="url(#glowF)"/>
+  
+  <!-- Elegant elongated head -->
+  <ellipse cx="100" cy="95" rx="45" ry="60" fill="url(#alienSkinF)"/>
+  
+  <!-- Flowing tentacle "hair" - more elegant/styled -->
+  <path d="M50 45 Q30 25 25 5 Q35 20 45 30 Q38 15 45 5 Q48 20 50 30" stroke="#8ad4b5" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M70 35 Q55 10 60 -5 Q65 15 70 25" stroke="#8ad4b5" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M90 30 Q88 5 95 -5 Q97 10 95 25" stroke="#8ad4b5" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M110 30 Q112 5 105 -5 Q103 10 105 25" stroke="#8ad4b5" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M130 35 Q145 10 140 -5 Q135 15 130 25" stroke="#8ad4b5" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M150 45 Q170 25 175 5 Q165 20 155 30 Q162 15 155 5 Q152 20 150 30" stroke="#8ad4b5" stroke-width="6" fill="none" stroke-linecap="round"/>
+  
+  <!-- Decorative tentacle curls (like styled hair) -->
+  <path d="M40 55 Q25 60 30 75 Q35 65 40 60" stroke="#7bc9a6" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M160 55 Q175 60 170 75 Q165 65 160 60" stroke="#7bc9a6" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Two large elegant eyes (more feminine, almond shaped) -->
+  <ellipse cx="72" cy="88" rx="18" ry="22" fill="#0a0a0a"/>
+  <ellipse cx="72" cy="88" rx="14" ry="18" fill="#1a472a"/>
+  <ellipse cx="72" cy="86" rx="8" ry="10" fill="#00ff88"/>
+  <circle cx="76" cy="82" r="4" fill="white" opacity="0.8"/>
+  <circle cx="68" cy="90" r="2" fill="white" opacity="0.5"/>
+  
+  <ellipse cx="128" cy="88" rx="18" ry="22" fill="#0a0a0a"/>
+  <ellipse cx="128" cy="88" rx="14" ry="18" fill="#1a472a"/>
+  <ellipse cx="128" cy="86" rx="8" ry="10" fill="#00ff88"/>
+  <circle cx="132" cy="82" r="4" fill="white" opacity="0.8"/>
+  <circle cx="124" cy="90" r="2" fill="white" opacity="0.5"/>
+  
+  <!-- Elegant alien eyelashes -->
+  <path d="M55 80 L48 72" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M58 76 L52 66" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M63 73 L60 63" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M145 80 L152 72" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M142 76 L148 66" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M137 73 L140 63" stroke="#1a472a" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Third eye (smaller, on forehead) -->
+  <ellipse cx="100" cy="55" rx="8" ry="10" fill="#0a0a0a"/>
+  <ellipse cx="100" cy="55" rx="6" ry="7" fill="#1a472a"/>
+  <ellipse cx="100" cy="54" rx="3" ry="4" fill="#00ff88"/>
+  <circle cx="101" cy="52" r="1.5" fill="white" opacity="0.8"/>
+  
+  <!-- Small nose slits -->
+  <ellipse cx="96" cy="112" rx="2" ry="3" fill="#5aab87"/>
+  <ellipse cx="104" cy="112" rx="2" ry="3" fill="#5aab87"/>
+  
+  <!-- Elegant smug smile -->
+  <path d="M78 130 Q100 145 122 130" stroke="#4a9070" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M122 130 Q127 127 130 130" stroke="#4a9070" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Alien lipstick/coloring -->
+  <path d="M85 132 Q100 140 115 132" fill="#6dd5a8" opacity="0.4"/>
+  
+  <!-- Blush (vain, pleased) -->
+  <ellipse cx="58" cy="105" rx="8" ry="5" fill="#ff9ecd" opacity="0.25"/>
+  <ellipse cx="142" cy="105" rx="8" ry="5" fill="#ff9ecd" opacity="0.25"/>
+  
+  <!-- Elegant earring/jewelry -->
+  <circle cx="48" cy="95" r="4" fill="#00ffaa" opacity="0.8">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M48 99 L48 110 L45 115 M48 110 L51 115" stroke="#00ffaa" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <circle cx="152" cy="95" r="4" fill="#00ffaa" opacity="0.8">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M152 99 L152 110 L149 115 M152 110 L155 115" stroke="#00ffaa" stroke-width="1.5" fill="none" opacity="0.7"/>
+  
+  <!-- Sparkles -->
+  <path d="M165 45 L167 50 L172 50 L168 53 L170 58 L165 55 L160 58 L162 53 L158 50 L163 50 Z" fill="white" opacity="0.9"/>
+  <path d="M30 60 L32 64 L36 64 L33 67 L34 71 L30 68 L26 71 L27 67 L24 64 L28 64 Z" fill="white" opacity="0.7"/>
+  
+  <!-- Crown/tiara of light -->
+  <path d="M70 38 L75 30 L80 38 M90 35 L95 25 L100 35 M105 35 L110 25 L115 35 M120 38 L125 30 L130 38" 
+        stroke="#00ffaa" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>
+</svg>

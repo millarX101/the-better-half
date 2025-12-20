@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="nurturerBgF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4899"/>
+      <stop offset="100%" style="stop-color:#f43f5e"/>
+    </linearGradient>
+    <linearGradient id="skinTone2F" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#deb896"/>
+      <stop offset="100%" style="stop-color:#c9a080"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#nurturerBgF)"/>
+  
+  <!-- Long flowing hair behind -->
+  <path d="M30 80 Q25 130 40 170 Q60 190 100 195 Q140 190 160 170 Q175 130 170 80" fill="#2d1f14"/>
+  
+  <!-- Face -->
+  <ellipse cx="100" cy="100" rx="48" ry="54" fill="url(#skinTone2F)"/>
+  
+  <!-- Hair - soft waves framing face -->
+  <ellipse cx="100" cy="55" rx="55" ry="32" fill="#3d2a1c"/>
+  <path d="M45 55 Q35 80 40 120 Q42 140 50 150" stroke="#2d1f14" stroke-width="20" fill="none" stroke-linecap="round"/>
+  <path d="M155 55 Q165 80 160 120 Q158 140 150 150" stroke="#2d1f14" stroke-width="20" fill="none" stroke-linecap="round"/>
+  <!-- Soft side swept bangs -->
+  <path d="M55 60 Q70 55 90 60 Q100 62 100 55" fill="#3d2a1c"/>
+  
+  <!-- Concerned caring eyes -->
+  <ellipse cx="75" cy="95" rx="13" ry="11" fill="white"/>
+  <ellipse cx="125" cy="95" rx="13" ry="11" fill="white"/>
+  
+  <!-- Pupils - soft, caring look -->
+  <circle cx="76" cy="96" r="6" fill="#4a3520"/>
+  <circle cx="126" cy="96" r="6" fill="#4a3520"/>
+  <circle cx="78" cy="94" r="2.5" fill="white"/>
+  <circle cx="128" cy="94" r="2.5" fill="white"/>
+  
+  <!-- Soft eyelashes -->
+  <path d="M63 90 L60 85" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  <path d="M67 88 L65 83" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  <path d="M71 87 L70 82" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  <path d="M137 90 L140 85" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  <path d="M133 88 L135 83" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  <path d="M129 87 L130 82" stroke="#2d1f14" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Eyebrows - slightly worried -->
+  <path d="M60 82 Q75 78 87 84" stroke="#3d2a1c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M113 84 Q125 78 140 82" stroke="#3d2a1c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Nose -->
+  <path d="M100 93 L100 110 Q97 114 100 114 Q103 114 100 110" stroke="#b8967a" stroke-width="2" fill="none"/>
+  
+  <!-- Soft lips - slightly pursed, about to sigh -->
+  <ellipse cx="100" cy="130" rx="14" ry="7" fill="#c47d7d"/>
+  <path d="M86 130 Q100 134 114 130" stroke="#a86060" stroke-width="1" fill="none"/>
+  <ellipse cx="100" cy="128" rx="8" ry="3" fill="#d49090" opacity="0.5"/>
+  
+  <!-- Blush -->
+  <ellipse cx="58" cy="110" rx="10" ry="6" fill="#e8a0a0" opacity="0.35"/>
+  <ellipse cx="142" cy="110" rx="10" ry="6" fill="#e8a0a0" opacity="0.35"/>
+  
+  <!-- Small heart necklace -->
+  <path d="M100 155 L100 162" stroke="#ffd700" stroke-width="1.5"/>
+  <path d="M95 167 C95 164 98 162 100 165 C102 162 105 164 105 167 C105 171 100 175 100 175 C100 175 95 171 95 167" fill="#ffd700" opacity="0.9"/>
+  
+  <!-- Delicate earrings -->
+  <circle cx="47" cy="100" r="3" fill="#ffd700" opacity="0.8"/>
+  <ellipse cx="47" cy="108" rx="2" ry="4" fill="#ffd700" opacity="0.6"/>
+  <circle cx="153" cy="100" r="3" fill="#ffd700" opacity="0.8"/>
+  <ellipse cx="153" cy="108" rx="2" ry="4" fill="#ffd700" opacity="0.6"/>
+  
+  <!-- Small heart floating (caring energy) -->
+  <path d="M160 50 C160 46 164 44 167 47 C170 44 174 46 174 50 C174 55 167 60 167 60 C167 60 160 55 160 50" fill="#fff" opacity="0.7"/>
+</svg>

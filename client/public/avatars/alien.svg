@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="alienBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+    <linearGradient id="alienSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8e6cf"/>
+      <stop offset="100%" style="stop-color:#7bc9a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#fff;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#fff;stop-opacity:0"/>
+    </radialGradient>
+    <linearGradient id="tentacle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7bc9a6"/>
+      <stop offset="100%" style="stop-color:#5aab87"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="100" fill="url(#alienBg)"/>
+  
+  <!-- Glow effect (luminescent) -->
+  <circle cx="100" cy="100" r="85" fill="url(#glow)"/>
+  
+  <!-- Head (elongated, alien) -->
+  <ellipse cx="100" cy="95" rx="50" ry="65" fill="url(#alienSkin)"/>
+  
+  <!-- Tentacle "hair" -->
+  <path d="M55 50 Q40 30 45 15 Q50 25 55 35 Q52 25 58 20" stroke="url(#tentacle)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M75 40 Q65 15 75 5 Q78 20 80 30" stroke="url(#tentacle)" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M100 35 Q100 10 105 0 Q108 15 105 30" stroke="url(#tentacle)" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M125 40 Q135 15 125 5 Q122 20 120 30" stroke="url(#tentacle)" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M145 50 Q160 30 155 15 Q150 25 145 35 Q148 25 142 20" stroke="url(#tentacle)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  
+  <!-- Three eyes (alien feature) -->
+  <!-- Left eye -->
+  <ellipse cx="70" cy="90" rx="16" ry="20" fill="#0a0a0a"/>
+  <ellipse cx="70" cy="90" rx="12" ry="16" fill="#1a472a"/>
+  <ellipse cx="70" cy="88" rx="6" ry="8" fill="#00ff88"/>
+  <circle cx="73" cy="85" r="3" fill="white" opacity="0.8"/>
+  
+  <!-- Center eye (smaller, third eye) -->
+  <ellipse cx="100" cy="70" rx="10" ry="12" fill="#0a0a0a"/>
+  <ellipse cx="100" cy="70" rx="7" ry="9" fill="#1a472a"/>
+  <ellipse cx="100" cy="69" rx="4" ry="5" fill="#00ff88"/>
+  <circle cx="102" cy="67" r="2" fill="white" opacity="0.8"/>
+  
+  <!-- Right eye -->
+  <ellipse cx="130" cy="90" rx="16" ry="20" fill="#0a0a0a"/>
+  <ellipse cx="130" cy="90" rx="12" ry="16" fill="#1a472a"/>
+  <ellipse cx="130" cy="88" rx="6" ry="8" fill="#00ff88"/>
+  <circle cx="133" cy="85" r="3" fill="white" opacity="0.8"/>
+  
+  <!-- Smug expression lines above eyes -->
+  <path d="M55 72 Q70 68 85 74" stroke="#5aab87" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M115 74 Q130 68 145 72" stroke="#5aab87" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Small nose slits -->
+  <ellipse cx="95" cy="115" rx="2" ry="4" fill="#5aab87"/>
+  <ellipse cx="105" cy="115" rx="2" ry="4" fill="#5aab87"/>
+  
+  <!-- Smug smile -->
+  <path d="M75 135 Q100 155 125 135" stroke="#4a9070" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M125 135 Q130 132 133 135" stroke="#4a9070" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Blush spots (vain, pleased with self) -->
+  <ellipse cx="60" cy="110" rx="8" ry="5" fill="#ff9ecd" opacity="0.3"/>
+  <ellipse cx="140" cy="110" rx="8" ry="5" fill="#ff9ecd" opacity="0.3"/>
+  
+  <!-- Sparkles (self-admiration) -->
+  <path d="M160 50 L163 55 L168 55 L164 59 L166 64 L160 60 L154 64 L156 59 L152 55 L157 55 Z" fill="white" opacity="0.9"/>
+  <path d="M35 70 L37 73 L40 73 L38 76 L39 79 L35 77 L31 79 L32 76 L30 73 L33 73 Z" fill="white" opacity="0.7"/>
+  
+  <!-- Small antenna with glowing tip -->
+  <line x1="100" y1="0" x2="100" y2="15" stroke="#7bc9a6" stroke-width="3"/>
+  <circle cx="100" cy="0" r="5" fill="#00ffaa">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

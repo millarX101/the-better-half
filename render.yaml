@@ -1,0 +1,20 @@
+# Render Blueprint
+# Deploy with: render.yaml
+
+services:
+  - type: web
+    name: toxic-hottie-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+    autoDeploy: true
