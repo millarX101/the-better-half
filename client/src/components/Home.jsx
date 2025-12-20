@@ -4,34 +4,14 @@ import { Sparkles, Settings } from 'lucide-react'
 
 const PERSONAS = [
   {
-    id: 'realist',
-    name: 'The Realist',
-    title: 'Seen Your Shit Before',
-    description: "Loves you, but they're exhausted by your choices. They've had this conversation before.",
-    color: 'from-orange-500 to-red-500',
+    id: 'partner',
+    name: 'Your Other Half',
+    title: 'Chaotically Realistic',
+    description: "Roasts you, guilt trips you, brings up 2019, blames their hormones. Just like the real thing.",
+    color: 'from-pink-500 to-orange-500',
     avatar: '/avatars/realist.svg',
     avatarFemale: '/avatars/realist-female.svg',
-    traits: ['Zero patience', 'Pattern spotter', '"Here we go again"']
-  },
-  {
-    id: 'nurturer',
-    name: 'The Nurturer',
-    title: 'Disappointed, Not Angry',
-    description: "Weaponised kindness. Somehow worse than yelling.",
-    color: 'from-pink-500 to-rose-500',
-    avatar: '/avatars/nurturer.svg',
-    avatarFemale: '/avatars/nurturer-female.svg',
-    traits: ['Devastating sighs', 'Guilt trips', '"I just want what\'s best"']
-  },
-  {
-    id: 'scorekeeper',
-    name: 'The Scorekeeper',
-    title: 'Remembers Everything',
-    description: "Has a mental filing cabinet of every mistake you've made since 2019.",
-    color: 'from-purple-500 to-indigo-500',
-    avatar: '/avatars/scorekeeper.svg',
-    avatarFemale: '/avatars/scorekeeper-female.svg',
-    traits: ['Keeps receipts', 'Never wrong', '"Remember when you..."']
+    traits: ['Unpredictable moods', 'Keeps receipts', 'Hormone warfare']
   },
   {
     id: 'alien',
@@ -133,7 +113,7 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
           <h2 className="text-center text-2xl font-bold mb-2">Choose Your Other Half</h2>
           <p className="text-center text-dark-400 mb-10">Pick the partner energy you need right now. They're all going to judge you.</p>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {PERSONAS.map((persona) => {
               const avatarSrc = partnerPrefs?.partnerGender === 'wife'
                 ? persona.avatarFemale

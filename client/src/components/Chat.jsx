@@ -14,29 +14,13 @@ const DEFAULT_PERSONALITY = {
 }
 
 const PERSONA_CONFIG = {
-  realist: {
-    name: 'The Realist',
-    title: 'Seen Your Shit Before',
-    color: 'from-orange-500 to-red-500',
-    bgGlow: 'bg-orange-500/20',
+  partner: {
+    name: 'Your Other Half',
+    title: 'Chaotically Realistic',
+    color: 'from-pink-500 to-orange-500',
+    bgGlow: 'bg-pink-500/20',
     avatar: '/avatars/realist.svg',
     avatarFemale: '/avatars/realist-female.svg'
-  },
-  nurturer: {
-    name: 'The Nurturer',
-    title: 'Disappointed, Not Angry',
-    color: 'from-pink-500 to-rose-500',
-    bgGlow: 'bg-pink-500/20',
-    avatar: '/avatars/nurturer.svg',
-    avatarFemale: '/avatars/nurturer-female.svg'
-  },
-  scorekeeper: {
-    name: 'The Scorekeeper',
-    title: 'Remembers Everything',
-    color: 'from-purple-500 to-indigo-500',
-    bgGlow: 'bg-purple-500/20',
-    avatar: '/avatars/scorekeeper.svg',
-    avatarFemale: '/avatars/scorekeeper-female.svg'
   },
   alien: {
     name: 'Zyx-9',
@@ -49,15 +33,13 @@ const PERSONA_CONFIG = {
 }
 
 const STARTER_MESSAGES = {
-  realist: "Oh, you're here. Let me guess — you've made a decision and you want me to tell you it's a good one. Go on then, what is it this time?",
-  nurturer: "Hey babe. *sighs* What's going on? I'm here for you... I just hope this isn't like last time.",
-  scorekeeper: "Interesting that you're coming to me with this. You know I remember how the last three times went, right? But go ahead. I'm listening.",
+  partner: "Oh, you're here. *sighs* Let me guess — you've done something and now you want me to tell you it's fine. It's not fine. But go on then, what is it this time? And before you start, I'm having a hot flash so choose your words carefully.",
   alien: "Greetings, human. I have been observing your species' relationship patterns and I have... concerns. But please, share your query. I am fascinated by your primitive bonding rituals."
 }
 
 export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
-  const { persona: personaId = 'realist' } = useParams()
-  const navigate = useNavigate()
+  const { persona: personaId = 'partner' } = useParams()
+  useNavigate() // keep for potential future use
   const { user, isAuthenticated } = useAuth()
   
   const [messages, setMessages] = useState([])
@@ -74,14 +56,14 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   
-  const persona = PERSONA_CONFIG[personaId] || PERSONA_CONFIG.realist
+  const persona = PERSONA_CONFIG[personaId] || PERSONA_CONFIG.partner
   const avatarSrc = partnerPrefs?.partnerGender === 'wife'
     ? persona.avatarFemale
     : persona.avatar
 
   // Initialize with starter message
   useEffect(() => {
-    const starterMessage = STARTER_MESSAGES[personaId] || STARTER_MESSAGES.realist
+    const starterMessage = STARTER_MESSAGES[personaId] || STARTER_MESSAGES.partner
     setMessages([{
       role: 'assistant',
       content: starterMessage
