@@ -415,7 +415,16 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
 
     const data = await response.json();
     const reply = data.choices[0].message.content;
-    
+
+    // Log to training_data for future model improvement (async, don't wait)
+    supabase.from('training_data').insert({
+      user_id: req.body.userId || null,
+      persona: persona,
+      personality: personality,
+      user_message: message,
+      ai_response: reply
+    }).then(() => {}).catch(err => console.error('Training data log error:', err));
+
     res.json({
       reply,
       persona: {

@@ -83,3 +83,25 @@ CREATE TRIGGER update_conversations_updated_at
 
 -- Clean up old anonymous usage records (run as a scheduled job)
 -- DELETE FROM anonymous_usage WHERE reset_at < NOW() - INTERVAL '7 days';
+
+-- Training data - stores all Q&A pairs for model improvement
+CREATE TABLE IF NOT EXISTS training_data (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  persona TEXT NOT NULL,
+  personality JSONB NOT NULL,
+  user_message TEXT NOT NULL,
+  ai_response TEXT NOT NULL,
+  rating INTEGER, -- 1-5 stars, NULL if not rated
+  flagged BOOLEAN DEFAULT FALSE, -- for bad responses to exclude
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_training_data_persona ON training_data(persona);
+CREATE INDEX IF NOT EXISTS idx_training_data_rating ON training_data(rating);
+CREATE INDEX IF NOT EXISTS idx_training_data_created ON training_data(created_at);
+
+-- Service role can manage all training data
+ALTER TABLE training_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role can manage training data" ON training_data
+  FOR ALL USING (auth.role() = 'service_role');
