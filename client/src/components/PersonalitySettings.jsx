@@ -227,11 +227,17 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
               Premium unlocks maximum crassness — full f-bombs, c-bombs, and absolutely no filter.
             </p>
             <div className="flex items-center gap-3">
-              <button className="text-amber-400 text-sm font-medium hover:underline">
+              <button
+                onClick={handleUpgradeClick}
+                className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+              >
                 $6.99/month
               </button>
               <span className="text-dark-600 text-xs">or</span>
-              <button className="text-amber-400 text-sm font-medium hover:underline">
+              <button
+                onClick={handleUpgradeClick}
+                className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+              >
                 $49.99/year (save 40%)
               </button>
             </div>
