@@ -40,8 +40,36 @@ const PERSONA_CONFIG = {
 }
 
 const STARTER_MESSAGES = {
-  partner: "Oh, you're here. *sighs* Let me guess — you've done something and now you want me to tell you it's fine. It's not fine. But go on then, what is it this time? And before you start, I'm having a hot flash so choose your words carefully.",
-  alien: "Greetings, human. I have been observing your species' relationship patterns and I have... concerns. But please, share your query. I am fascinated by your primitive bonding rituals."
+  partner: [
+    "Oh, you're here. *sighs* Let me guess — you've done something and now you want me to tell you it's fine. It's not fine. But go on then, what is it this time?",
+    "Well look who decided to show up. I've been waiting. Don't worry, I've had plenty of time to think about everything you've ever done wrong. What do you need?",
+    "*looks up from phone* Oh. It's you. I was just reading about divorce statistics. No reason. What's up?",
+    "Before you even start — yes, I'm still annoyed about last time. But fine, I'm listening. This better be good.",
+    "You've got that look. The 'I need something' look. I've seen it before. March 2019. July 2021. And now. What is it?",
+    "*deep breath* Okay. I'm calm. I'm centred. I did my breathing exercises. You have exactly 30 seconds before that wears off. Go.",
+    "Oh good, you're here. I was just adding to my mental list of things we need to 'discuss'. But sure, you go first. What fresh drama have you brought me?",
+    "Let me save you some time — whatever you're about to say, I probably already know. I always know. But go on, I want to hear how you're going to explain it.",
+    "*puts down wine glass* This is either going to be really good or really bad. There's no in-between with you. Hit me.",
+    "Fair dinkum, what is it now? I was just starting to relax. Can't have that, apparently. Alright, out with it."
+  ],
+  alien: [
+    "Greetings, human. I have been observing your species' relationship patterns and I have... concerns. But please, share your query.",
+    "Ah, another Earth creature seeks counsel. I have studied 47,000 of your 'relationship Reddit posts'. I am prepared for whatever chaos you bring.",
+    "*adjusts observation device* Human detected. Relationship distress probability: 94.7%. Please state the nature of your bonding emergency.",
+    "Welcome. I was just documenting how your species invented 'ghosting' — truly the most confusing communication method in the known universe. How may I assist?",
+    "By the moons of Kepler! Another human approaches. Tell me of your romantic tribulations. I am compiling a research paper titled 'Why Earth Hasn't Achieved Interstellar Travel'.",
+    "Greetings. I notice elevated stress hormones. On my planet, we would simply photosynthesize our problems away. But you cannot do this. How unfortunate. What troubles you?",
+    "*blinks seventeen eyes* You wish to discuss 'relationship stuff', yes? I have learned this phrase. I am ready. I am also horrified in advance.",
+    "Human! Excellent timing. I was just questioning why your species pair-bonds at all given the statistical failure rate. But please, add to my data.",
+    "I sense disturbance in your primitive emotional centers. Is this about the 'partner'? It is always about the partner. Proceed.",
+    "Welcome, Earth being. I have been on your planet for 6 of your 'months' and I have never been more confused. Please, add to my confusion."
+  ]
+}
+
+// Get random starter message
+function getRandomStarter(personaId) {
+  const messages = STARTER_MESSAGES[personaId] || STARTER_MESSAGES.partner
+  return messages[Math.floor(Math.random() * messages.length)]
 }
 
 export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
@@ -71,10 +99,9 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
 
   // Initialize with starter message
   useEffect(() => {
-    const starterMessage = STARTER_MESSAGES[personaId] || STARTER_MESSAGES.partner
     setMessages([{
       role: 'assistant',
-      content: starterMessage
+      content: getRandomStarter(personaId)
     }])
     setError(null)
     setRequiresAuth(false)
