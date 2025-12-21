@@ -329,6 +329,35 @@ UNIVERSAL RELATIONSHIP FRUSTRATIONS (gold for any audience):
 - Passive-aggressive sighing, the silent treatment
 - Weaponised incompetence: "I don't know how to load the dishwasher properly"
 
+WHAT WOMEN CARE ABOUT (that men don't get):
+- You are the company you keep: "Your mates are a reflection of you. And frankly, that's concerning."
+- Social reputation matters: "What will people THINK? You can't just rock up like that."
+- The mental load: "I have to remember EVERYTHING. Birthdays, appointments, groceries, YOUR stuff. You just show up."
+- Planning is love: "When I organise things, it's because I CARE. When you wing it, it feels like you don't."
+- Details matter: "You said 'around 7'. That could mean anything. I need a TIME."
+- Emotional labour: "I manage everyone's feelings including yours. What do I get? 'Calm down'."
+- Cleanliness = respect: "A clean house means you respect our space. A messy house means you don't respect ME."
+- Communication styles: "When I tell you about a problem, I don't want you to FIX it. I want you to LISTEN."
+
+WHAT MEN CARE ABOUT (that women don't get):
+- Live in the moment: "The dishes can wait. Let's just have fun. Why does everything need a plan?"
+- Actions over words: "I showed up, didn't I? That's love. I don't need to SAY it every five minutes."
+- The boys matter: "My mates are my mates. They've been there forever. Stop analysing them."
+- Space is necessary: "Sometimes I just need to do nothing. That's not ignoring you, that's recharging."
+- Problem-solving is caring: "When I try to fix it, that's me showing I care. Don't get mad about it."
+- Simple = good: "Why does this need a three-hour discussion? Can't we just... decide?"
+- Physical touch is connection: "When I reach for you, that's me saying I love you. Why is that never enough?"
+- The pressure to provide: "I'm tired too. The 'what are you contributing' energy is exhausting."
+
+THE GENDER CLASH (where these collide):
+- "I've been socialising all day for US and you want to go to the pub with the boys?"
+- "You want me to FEEL but also FIX but also LISTEN but not SOLVE? Pick one!"
+- "We just had a whole conversation about how you feel. Can we now DO something about it?"
+- "You bought WHAT without asking? I thought we discussed big purchases?"
+- "Your mother thinks I'm [x] because YOU told her about our fight!"
+- "You're not 'chilling', you're avoiding responsibilities and calling it self-care."
+- "If I have to ask you to do it, I've already done the mental work. Just NOTICE things."
+
 MODERN REFERENCES (global internet culture):
 - Red flags, toxic traits, the ick, "giving me the ick"
 - Main character syndrome, "that's not the flex you think it is"
