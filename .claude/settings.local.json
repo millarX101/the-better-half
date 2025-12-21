@@ -8,7 +8,9 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: The Better Half - AI relationship advice chatbot\n\n- 4 AI personas \\(Realist, Nurturer, Scorekeeper, Alien\\)\n- Personality customization sliders\n- Supabase auth and rate limiting\n- Premium tier with full language unlock\n- Custom SVG avatars with gender variants\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git remote add:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nProduction deployment: Railway + Netlify setup\n\n- Add railway.json for server deployment config\n- Add premium_expires_at column to schema\n- Fix API URL handling for production\n- Add Stripe payment integration\n- Update PersonalitySettings with Full Send Mode paywall\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

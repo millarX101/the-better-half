@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Settings, X, Flame, Heart, MessageSquare, Crown, Lock } from 'lucide-react'
+import { Settings, X, Flame, Heart, MessageSquare, Crown, Lock, Zap } from 'lucide-react'
+
+const FULL_SEND_SETTINGS = {
+  savagery: 100,
+  honesty: 100,
+  crassness: 100,
+  class: 0
+}
 
 const SLIDER_CONFIG = [
   {
@@ -37,8 +44,36 @@ const SLIDER_CONFIG = [
   }
 ]
 
-export default function PersonalitySettings({ settings, onSettingsChange, isOpen, onToggle, isPremium = false }) {
-  
+export default function PersonalitySettings({ settings, onSettingsChange, isOpen, onToggle, isPremium = false, onUpgrade }) {
+  const [showPaywall, setShowPaywall] = useState(false)
+
+  const isFullSend = settings.savagery === 100 &&
+                     settings.honesty === 100 &&
+                     settings.crassness === 100 &&
+                     settings.class === 0
+
+  const handleFullSendToggle = () => {
+    if (!isPremium) {
+      setShowPaywall(true)
+      return
+    }
+
+    if (isFullSend) {
+      // Turn off full send - go back to defaults
+      onSettingsChange({ savagery: 50, honesty: 50, crassness: 50, class: 50 })
+    } else {
+      // Turn on full send
+      onSettingsChange(FULL_SEND_SETTINGS)
+    }
+  }
+
+  const handleUpgradeClick = () => {
+    setShowPaywall(false)
+    if (onUpgrade) {
+      onUpgrade()
+    }
+  }
+
   const handleSliderChange = (id, value) => {
     onSettingsChange({
       ...settings,
@@ -73,6 +108,38 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
         <p className="text-dark-400 text-sm mb-6">
           Dial in exactly how much relationship realness you can handle.
         </p>
+
+        {/* Full Send Mode Toggle */}
+        <div
+          onClick={handleFullSendToggle}
+          className={`mb-6 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+            isFullSend && isPremium
+              ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/50'
+              : 'bg-dark-800 border-dark-700 hover:border-dark-600'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg ${isFullSend && isPremium ? 'bg-red-500/30' : 'bg-dark-700'}`}>
+                <Zap className={`w-5 h-5 ${isFullSend && isPremium ? 'text-red-400' : 'text-dark-400'}`} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">Full Send Mode</span>
+                  {!isPremium && <Lock className="w-4 h-4 text-amber-400" />}
+                </div>
+                <p className="text-dark-400 text-xs">Maximum chaos. No filter. Full bogan.</p>
+              </div>
+            </div>
+            <div className={`w-12 h-7 rounded-full p-1 transition-colors ${
+              isFullSend && isPremium ? 'bg-red-500' : 'bg-dark-600'
+            }`}>
+              <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                isFullSend && isPremium ? 'translate-x-5' : 'translate-x-0'
+              }`} />
+            </div>
+          </div>
+        </div>
 
         <div className="space-y-6">
           {SLIDER_CONFIG.map((slider) => {
@@ -177,6 +244,58 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
         >
           Save & Close
         </button>
+
+        {/* Paywall Popup */}
+        {showPaywall && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="card max-w-sm w-full p-6 text-center relative">
+              <button
+                onClick={() => setShowPaywall(false)}
+                className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-dark-400" />
+              </button>
+
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+
+              <h3 className="font-display text-2xl font-bold mb-2">Unlock Full Send Mode</h3>
+              <p className="text-dark-400 text-sm mb-6">
+                Get maximum savagery, brutal honesty, full bogan language, and absolutely no filter.
+                Your partner will hold nothing back.
+              </p>
+
+              <div className="bg-dark-800 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-3xl font-bold">$49.99</span>
+                  <span className="text-dark-400">/year</span>
+                </div>
+                <p className="text-green-400 text-xs mb-3">Save 40% vs monthly ($6.99/mo)</p>
+                <ul className="text-sm text-dark-300 space-y-1">
+                  <li>✓ Unlimited messages</li>
+                  <li>✓ UNHINGED Mode unlocked</li>
+                  <li>✓ Maximum crassness enabled</li>
+                  <li>✓ No daily limits</li>
+                  <li>✓ 1 year access</li>
+                </ul>
+              </div>
+
+              <button
+                onClick={handleUpgradeClick}
+                className="btn-primary w-full mb-3"
+              >
+                Upgrade to Premium
+              </button>
+              <button
+                onClick={() => setShowPaywall(false)}
+                className="text-dark-400 text-sm hover:text-white transition-colors"
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

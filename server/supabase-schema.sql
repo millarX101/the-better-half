@@ -10,9 +10,13 @@ CREATE TABLE IF NOT EXISTS user_usage (
   is_premium BOOLEAN DEFAULT FALSE,
   stripe_customer_id TEXT,
   stripe_subscription_id TEXT,
+  premium_expires_at TIMESTAMPTZ,  -- For one-time yearly purchases
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add premium_expires_at column if table already exists
+ALTER TABLE user_usage ADD COLUMN IF NOT EXISTS premium_expires_at TIMESTAMPTZ;
 
 -- Anonymous user tracking by IP
 CREATE TABLE IF NOT EXISTS anonymous_usage (

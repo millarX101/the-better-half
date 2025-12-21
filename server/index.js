@@ -4,8 +4,14 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import rateLimit from 'express-rate-limit';
+import Stripe from 'stripe';
 
 dotenv.config();
+
+// Initialize Stripe (optional - only if keys are provided)
+const stripe = process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_xxxxx'
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 // Validate required environment variables
 const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_KEY'];
@@ -36,7 +42,15 @@ app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true
 }));
-app.use(express.json());
+
+// Use raw body for Stripe webhook, JSON for everything else
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/webhook') {
+    express.raw({ type: 'application/json' })(req, res, next);
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 // Character personas
 const PERSONAS = {
@@ -296,7 +310,7 @@ async function checkUsageLimit(req, res, next) {
     // Authenticated user - check their subscription and usage
     const { data: user, error } = await supabase
       .from('user_usage')
-      .select('message_count, reset_at, is_premium')
+      .select('message_count, reset_at, is_premium, premium_expires_at')
       .eq('user_id', userId)
       .single();
     
@@ -320,11 +334,22 @@ async function checkUsageLimit(req, res, next) {
       return next();
     }
     
-    // Premium users - unlimited
-    if (user.is_premium) {
+    // Premium users - unlimited (check expiry for one-time purchases)
+    const isPremiumActive = user.is_premium &&
+      (!user.premium_expires_at || new Date(user.premium_expires_at) > now);
+
+    if (isPremiumActive) {
       req.isPremium = true;
       req.remainingMessages = 'unlimited';
       return next();
+    }
+
+    // If premium expired, update the record
+    if (user.is_premium && user.premium_expires_at && new Date(user.premium_expires_at) <= now) {
+      await supabase
+        .from('user_usage')
+        .update({ is_premium: false })
+        .eq('user_id', userId);
     }
     
     // Check if reset is needed
@@ -491,8 +516,111 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Looking fabulous as always' });
 });
 
+// ============================================
+// STRIPE PAYMENT ENDPOINTS
+// ============================================
+
+// Create Stripe Checkout Session
+app.post('/api/create-checkout-session', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payments not configured yet. Check back soon!' });
+  }
+
+  try {
+    const { userId, userEmail } = req.body;
+
+    if (!userId || !userEmail) {
+      return res.status(400).json({ error: 'Must be logged in to upgrade' });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',  // One-time payment, not subscription
+      customer_email: userEmail,
+      line_items: [
+        {
+          price: process.env.STRIPE_PRICE_ID,
+          quantity: 1
+        }
+      ],
+      success_url: `${process.env.CLIENT_URL}/?payment=success`,
+      cancel_url: `${process.env.CLIENT_URL}/?payment=cancelled`,
+      metadata: {
+        userId: userId
+      }
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Stripe checkout error:', error);
+    res.status(500).json({ error: 'Failed to create checkout session' });
+  }
+});
+
+// Stripe Webhook - handles successful payments
+app.post('/api/webhook', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).send('Payments not configured');
+  }
+
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object;
+      const userId = session.metadata?.userId;
+
+      if (userId && session.payment_status === 'paid') {
+        // Calculate premium expiry (1 year from now)
+        const premiumExpiresAt = new Date();
+        premiumExpiresAt.setFullYear(premiumExpiresAt.getFullYear() + 1);
+
+        // Update user to premium for 1 year
+        const { error } = await supabase
+          .from('user_usage')
+          .update({
+            is_premium: true,
+            stripe_customer_id: session.customer,
+            premium_expires_at: premiumExpiresAt.toISOString()
+          })
+          .eq('user_id', userId);
+
+        if (error) {
+          console.error('Failed to update premium status:', error);
+        } else {
+          console.log(`User ${userId} upgraded to UNHINGED Mode for 1 year!`);
+        }
+      }
+      break;
+    }
+
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+  }
+
+  res.json({ received: true });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  if (stripe) {
+    console.log('Stripe payments enabled');
+  } else {
+    console.log('Stripe not configured - add keys to .env to enable payments');
+  }
 });
 
 export default app;

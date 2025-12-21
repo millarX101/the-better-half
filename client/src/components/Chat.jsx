@@ -13,6 +13,13 @@ const DEFAULT_PERSONALITY = {
   class: 50        // 0 = full bogan, 100 = posh
 }
 
+const PREMIUM_PERSONALITY = {
+  savagery: 100,   // MAXIMUM CHAOS
+  honesty: 100,    // BRUTAL TRUTH
+  crassness: 100,  // FULL FILTH MODE
+  class: 0         // FULL BOGAN
+}
+
 const PERSONA_CONFIG = {
   partner: {
     name: 'Your Other Half',
@@ -52,7 +59,8 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   const [personality, setPersonality] = useState(DEFAULT_PERSONALITY)
   const [showSettings, setShowSettings] = useState(false)
   const [isPremium, setIsPremium] = useState(false)
-  
+  const [isUpgrading, setIsUpgrading] = useState(false)
+
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   
@@ -92,6 +100,10 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
           if (response.ok) {
             const data = await response.json()
             setIsPremium(data.isPremium || false)
+            // Set premium users to full swear mode by default
+            if (data.isPremium) {
+              setPersonality(PREMIUM_PERSONALITY)
+            }
           }
         } catch (err) {
           console.error('Failed to check premium status:', err)
@@ -100,6 +112,38 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
     }
     checkPremiumStatus()
   }, [isAuthenticated, user?.id])
+
+  const handleUpgrade = async () => {
+    if (!user?.id || !user?.email) {
+      onShowAuth()
+      return
+    }
+
+    setIsUpgrading(true)
+    try {
+      const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          userEmail: user.email
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setError(data.error || 'Failed to start checkout')
+      }
+    } catch (err) {
+      console.error('Upgrade error:', err)
+      setError('Failed to connect to payment system')
+    } finally {
+      setIsUpgrading(false)
+    }
+  }
 
   const sendMessage = async (e) => {
     e.preventDefault()
@@ -194,6 +238,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
             isOpen={showSettings}
             onToggle={() => setShowSettings(!showSettings)}
             isPremium={isPremium}
+            onUpgrade={handleUpgrade}
           />
           
           <button
@@ -260,11 +305,12 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                 )}
                 
                 {requiresUpgrade && (
-                  <button 
+                  <button
                     className="btn-primary mt-3 text-sm py-2"
-                    onClick={() => alert('Stripe checkout would go here!')}
+                    onClick={handleUpgrade}
+                    disabled={isUpgrading}
                   >
-                    Upgrade to Premium - $5/mo
+                    {isUpgrading ? 'Loading...' : 'Go UNHINGED - $49.99/year'}
                   </button>
                 )}
               </div>
