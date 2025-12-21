@@ -184,8 +184,54 @@ function generatePersonalityPrompt(personality, isPremium = false, persona = 'pa
   return modifiers.join('\n\n');
 }
 
+// Cache for top responses (refresh every 10 minutes)
+let topResponsesCache = {
+  partner: [],
+  alien: [],
+  lastFetch: 0
+};
+
+// Fetch top-rated responses for few-shot learning
+async function getTopResponses(persona) {
+  const now = Date.now();
+  const TEN_MINUTES = 10 * 60 * 1000;
+
+  // Return cached if fresh
+  if (now - topResponsesCache.lastFetch < TEN_MINUTES && topResponsesCache[persona]?.length > 0) {
+    return topResponsesCache[persona];
+  }
+
+  try {
+    // Get highly-rated, non-flagged responses from the last 30 days
+    const { data, error } = await supabase
+      .from('training_data')
+      .select('user_message, ai_response')
+      .eq('persona', persona)
+      .gte('rating', 4) // 4-5 star responses only
+      .eq('flagged', false)
+      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+      .order('rating', { ascending: false })
+      .limit(20);
+
+    if (error) {
+      console.error('Error fetching top responses:', error);
+      return [];
+    }
+
+    // Shuffle and pick 3-5 random examples for variety
+    const shuffled = (data || []).sort(() => Math.random() - 0.5);
+    topResponsesCache[persona] = shuffled.slice(0, 5);
+    topResponsesCache.lastFetch = now;
+
+    return topResponsesCache[persona];
+  } catch (err) {
+    console.error('Top responses fetch error:', err);
+    return [];
+  }
+}
+
 // Build complete system prompt
-function buildSystemPrompt(persona, personality, isPremium = false, partnerPrefs = {}) {
+function buildSystemPrompt(persona, personality, isPremium = false, partnerPrefs = {}, fewShotExamples = []) {
   const basePrompt = PERSONAS[persona]?.basePrompt || PERSONAS.partner.basePrompt;
   const personalityModifiers = generatePersonalityPrompt(personality, isPremium, persona);
 
@@ -265,7 +311,15 @@ MODERN REFERENCES (global internet culture):
 - Red flags, toxic traits, the ick, "giving me the ick"
 - Main character syndrome, "that's not the flex you think it is"
 - Leaving on read, being sus, "I'm not mad, I'm disappointed"
-- Emotional intelligence of a teaspoon/microwave meal`;
+- Emotional intelligence of a teaspoon/microwave meal${fewShotExamples.length > 0 ? `
+
+EXAMPLES OF RESPONSES USERS LOVED (use these as inspiration for tone and style):
+${fewShotExamples.map((ex, i) => `
+Example ${i + 1}:
+User: "${ex.user_message}"
+You: "${ex.ai_response}"`).join('\n')}
+
+These got high ratings. Match this energy and creativity. But NEVER copy them exactly — always be fresh and surprising.` : ''}`;
 
 }
 
@@ -450,7 +504,10 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     }
     
     const selectedPersona = PERSONAS[persona] || PERSONAS.realist;
-    const systemPrompt = buildSystemPrompt(persona, personality, req.isPremium || false, partnerPrefs);
+
+    // Fetch top-rated examples for few-shot learning (makes AI smarter over time)
+    const fewShotExamples = await getTopResponses(persona);
+    const systemPrompt = buildSystemPrompt(persona, personality, req.isPremium || false, partnerPrefs, fewShotExamples);
     
     // Build messages array with history (OpenRouter uses OpenAI format)
     const messages = [
@@ -487,17 +544,34 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     const data = await response.json();
     const reply = data.choices[0].message.content;
 
-    // Log to training_data for future model improvement (async, don't wait)
-    supabase.from('training_data').insert({
-      user_id: req.body.userId || null,
-      persona: persona,
-      personality: personality,
-      user_message: message,
-      ai_response: reply
-    }).then(() => {}).catch(err => console.error('Training data log error:', err));
+    // Log to training_data and get the ID back for rating
+    let responseId = null;
+    try {
+      const { data: insertedData } = await supabase
+        .from('training_data')
+        .insert({
+          user_id: req.body.userId || null,
+          persona: persona,
+          personality: personality,
+          user_message: message,
+          ai_response: reply
+        })
+        .select('id')
+        .single();
+
+      responseId = insertedData?.id || null;
+    } catch (err) {
+      console.error('Training data log error:', err);
+    }
+
+    // Update user stats (async, don't block response)
+    if (req.body.userId) {
+      updateUserStats(req.body.userId).catch(err => console.error('Stats update error:', err));
+    }
 
     res.json({
       reply,
+      responseId, // For rating this response later
       persona: {
         name: selectedPersona.name,
         avatar: selectedPersona.avatar
@@ -521,6 +595,43 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
   }
 });
 
+// Rate a response (for training)
+app.post('/api/rate', async (req, res) => {
+  try {
+    const { responseId, rating, flag } = req.body;
+
+    if (!responseId) {
+      return res.status(400).json({ error: "Missing response ID" });
+    }
+
+    if (rating !== undefined && (rating < 1 || rating > 5)) {
+      return res.status(400).json({ error: "Rating must be 1-5" });
+    }
+
+    const updateData = {};
+    if (rating !== undefined) updateData.rating = rating;
+    if (flag !== undefined) updateData.flagged = flag;
+
+    const { error } = await supabase
+      .from('training_data')
+      .update(updateData)
+      .eq('id', responseId);
+
+    if (error) {
+      console.error('Rating update error:', error);
+      return res.status(500).json({ error: "Failed to save rating" });
+    }
+
+    // Clear cache so new ratings take effect
+    topResponsesCache.lastFetch = 0;
+
+    res.json({ success: true, message: rating >= 4 ? "Thanks! This helps me get funnier." : "Got it. I'll do better next time." });
+  } catch (error) {
+    console.error('Rate error:', error);
+    res.status(500).json({ error: "Failed to rate response" });
+  }
+});
+
 // Get available personas
 app.get('/api/personas', (req, res) => {
   const personas = Object.entries(PERSONAS).map(([key, value]) => ({
@@ -531,31 +642,133 @@ app.get('/api/personas', (req, res) => {
   res.json(personas);
 });
 
-// Check user premium status
+// Check user premium status AND update streak
 app.get('/api/user-status', async (req, res) => {
   try {
     const { userId } = req.query;
 
     if (!userId) {
-      return res.json({ isPremium: false });
+      return res.json({ isPremium: false, streak: null });
     }
 
+    // Get premium status
     const { data: user, error } = await supabase
       .from('user_usage')
       .select('is_premium')
       .eq('user_id', userId)
       .single();
 
-    if (error || !user) {
-      return res.json({ isPremium: false });
+    // Get/update streak
+    const today = new Date().toISOString().split('T')[0];
+    let streakData = null;
+
+    const { data: existingStreak } = await supabase
+      .from('user_streaks')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (existingStreak) {
+      const lastActive = existingStreak.last_active_date;
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+      let newStreak = existingStreak.current_streak;
+      let newLongest = existingStreak.longest_streak;
+
+      if (lastActive === today) {
+        // Already logged in today
+        streakData = existingStreak;
+      } else if (lastActive === yesterday) {
+        // Consecutive day - increment streak!
+        newStreak += 1;
+        newLongest = Math.max(newLongest, newStreak);
+
+        const { data: updated } = await supabase
+          .from('user_streaks')
+          .update({
+            current_streak: newStreak,
+            longest_streak: newLongest,
+            last_active_date: today,
+            total_sessions: existingStreak.total_sessions + 1
+          })
+          .eq('user_id', userId)
+          .select()
+          .single();
+
+        streakData = updated;
+      } else {
+        // Streak broken - reset to 1
+        const { data: updated } = await supabase
+          .from('user_streaks')
+          .update({
+            current_streak: 1,
+            last_active_date: today,
+            total_sessions: existingStreak.total_sessions + 1
+          })
+          .eq('user_id', userId)
+          .select()
+          .single();
+
+        streakData = updated;
+      }
+    } else {
+      // New user - create streak record
+      const { data: newStreak } = await supabase
+        .from('user_streaks')
+        .insert({
+          user_id: userId,
+          current_streak: 1,
+          longest_streak: 1,
+          last_active_date: today,
+          total_sessions: 1
+        })
+        .select()
+        .single();
+
+      streakData = newStreak;
     }
 
-    res.json({ isPremium: user.is_premium || false });
+    res.json({
+      isPremium: user?.is_premium || false,
+      streak: streakData ? {
+        current: streakData.current_streak,
+        longest: streakData.longest_streak,
+        totalSessions: streakData.total_sessions,
+        totalMessages: streakData.total_messages,
+        totalRoasts: streakData.total_roasts_received
+      } : null
+    });
   } catch (error) {
     console.error('User status check error:', error);
-    res.json({ isPremium: false });
+    res.json({ isPremium: false, streak: null });
   }
 });
+
+// Update message count for streak tracking
+async function updateUserStats(userId) {
+  if (!userId) return;
+
+  try {
+    await supabase.rpc('increment_user_stats', { p_user_id: userId });
+  } catch (err) {
+    // Fallback if RPC doesn't exist
+    const { data: streak } = await supabase
+      .from('user_streaks')
+      .select('total_messages, total_roasts_received')
+      .eq('user_id', userId)
+      .single();
+
+    if (streak) {
+      await supabase
+        .from('user_streaks')
+        .update({
+          total_messages: (streak.total_messages || 0) + 1,
+          total_roasts_received: (streak.total_roasts_received || 0) + 1
+        })
+        .eq('user_id', userId);
+    }
+  }
+}
 
 // Health check
 app.get('/api/health', (req, res) => {

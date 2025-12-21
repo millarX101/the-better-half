@@ -109,3 +109,31 @@ CREATE INDEX IF NOT EXISTS idx_training_data_created ON training_data(created_at
 ALTER TABLE training_data ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Service role can manage training data" ON training_data
   FOR ALL USING (auth.role() = 'service_role');
+
+-- User streaks and engagement tracking
+CREATE TABLE IF NOT EXISTS user_streaks (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
+  current_streak INTEGER DEFAULT 0,
+  longest_streak INTEGER DEFAULT 0,
+  last_active_date DATE,
+  total_sessions INTEGER DEFAULT 0,
+  total_messages INTEGER DEFAULT 0,
+  total_roasts_received INTEGER DEFAULT 0,
+  achievements JSONB DEFAULT '[]'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_streaks_user_id ON user_streaks(user_id);
+
+ALTER TABLE user_streaks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view own streaks" ON user_streaks
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Service role can manage streaks" ON user_streaks
+  FOR ALL USING (auth.role() = 'service_role');
+
+-- Trigger for updated_at
+CREATE TRIGGER update_user_streaks_updated_at
+  BEFORE UPDATE ON user_streaks
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
