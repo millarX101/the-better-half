@@ -1,0 +1,9 @@
+# robots.txt for The Better Half
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.thebetterhalf.com.au/sitemap.xml
+
+# Disallow admin/API paths
+Disallow: /api/
