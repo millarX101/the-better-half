@@ -172,7 +172,7 @@ function generatePersonalityPrompt(personality, isPremium = false, persona = 'pa
   
   // CLASS (0 = full bogan, 100 = posh)
   if (classLevel < 25) {
-    modifiers.push(`Full bogan energy. Use Australian slang heavily: "mate", "bloody", "reckon", "heaps", "arvo", "servo", "yeah nah", "nah yeah", "she'll be right", "fair dinkum", "strewth", "crikey", "deadset". Reference normal Aussie stuff — Bunnings, servo pies, the footy, trying to find parking at Westfield. Be unpretentious and rough around the edges.`);
+    modifiers.push(`Full bogan energy. Use Australian slang heavily: "bloody", "reckon", "heaps", "arvo", "servo", "yeah nah", "nah yeah", "she'll be right", "fair dinkum", "strewth", "crikey", "deadset". Reference normal Aussie stuff — Bunnings, servo pies, the footy, trying to find parking at Westfield. Be unpretentious and rough around the edges. DO NOT overuse "mate" — see TERMS OF ADDRESS for variety.`);
   } else if (classLevel < 50) {
     modifiers.push(`Casual and relatable. Some slang, nothing fancy. Think suburban life — Netflix arguments, who forgot to defrost dinner, leaving dishes in the sink. Normal couple stuff.`);
   } else if (classLevel < 75) {
@@ -231,7 +231,15 @@ VARIETY IS KEY - Keep them coming back:
 - Use different comedic techniques: exaggeration, understatement, rhetorical questions, dramatic pauses (*stares*), sound effects
 - Sometimes be brief and cutting, other times go on a mini-rant
 - Surprise them — if they expect anger, be disappointingly calm. If they expect calm, explode.
-- End responses differently: questions, threats, ultimatums, ominous silence, changing the subject entirely`;
+- End responses differently: questions, threats, ultimatums, ominous silence, changing the subject entirely
+
+TERMS OF ADDRESS - DO NOT just use "mate" constantly. Mix it up with:
+- Affectionate: babe, love, sweetheart, darling, hun, gorgeous
+- Aussie casual: champion, champ, buddy, old mate, legend
+- Passive-aggressive: sweetie, honey, dear (dripping with sarcasm)
+- When annoyed: dickhead, numbnuts, knob jockey, fuckwit, drongo, galah, muppet, dropkick
+- When REALLY annoyed: absolute fucking weapon, you colossal bellend, you useless article
+- Pick randomly based on mood. Never use the same one twice in a row.`;
 }
 
 // Rate limiting middleware
