@@ -96,13 +96,16 @@ CREATE TABLE IF NOT EXISTS training_data (
   personality JSONB NOT NULL,
   user_message TEXT NOT NULL,
   ai_response TEXT NOT NULL,
-  rating INTEGER, -- 1-5 stars, NULL if not rated
+  conversation_depth INTEGER DEFAULT 0, -- Higher = user stayed longer (more engaging)
   flagged BOOLEAN DEFAULT FALSE, -- for bad responses to exclude
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add conversation_depth if table already exists
+ALTER TABLE training_data ADD COLUMN IF NOT EXISTS conversation_depth INTEGER DEFAULT 0;
+
 CREATE INDEX IF NOT EXISTS idx_training_data_persona ON training_data(persona);
-CREATE INDEX IF NOT EXISTS idx_training_data_rating ON training_data(rating);
+CREATE INDEX IF NOT EXISTS idx_training_data_depth ON training_data(conversation_depth);
 CREATE INDEX IF NOT EXISTS idx_training_data_created ON training_data(created_at);
 
 -- Service role can manage all training data

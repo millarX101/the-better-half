@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Send, ArrowLeft, AlertCircle, User, ThumbsUp, ThumbsDown, Flame } from 'lucide-react'
+import { Send, ArrowLeft, AlertCircle, User, Flame } from 'lucide-react'
 import PersonalitySettings from './PersonalitySettings'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
@@ -222,9 +222,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
       
       setMessages([...newMessages, {
         role: 'assistant',
-        content: data.reply,
-        responseId: data.responseId,
-        rated: null
+        content: data.reply
       }])
       setRemainingMessages(data.remainingMessages)
       setIsPremium(data.isPremium || false)
@@ -234,30 +232,6 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
       setError("Ugh, something broke. Even I can't look this good all the time.")
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  // Rate a response
-  const rateResponse = async (messageIndex, rating) => {
-    const message = messages[messageIndex]
-    if (!message.responseId || message.rated) return
-
-    try {
-      await fetch(`${API_URL}/api/rate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          responseId: message.responseId,
-          rating: rating // 5 for thumbs up, 1 for thumbs down
-        })
-      })
-
-      // Update the message to show it's been rated
-      setMessages(prev => prev.map((msg, i) =>
-        i === messageIndex ? { ...msg, rated: rating } : msg
-      ))
-    } catch (err) {
-      console.error('Rating error:', err)
     }
   }
 
@@ -333,37 +307,8 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                   <img src={avatarSrc} alt={persona.name} className="w-full h-full object-cover" />
                 </div>
               )}
-              <div className="flex flex-col">
-                <div className={message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}>
-                  {message.content}
-                </div>
-                {/* Rating buttons for AI responses */}
-                {message.role === 'assistant' && message.responseId && (
-                  <div className="flex items-center gap-1 mt-1 ml-1">
-                    {message.rated ? (
-                      <span className="text-xs text-dark-500">
-                        {message.rated === 5 ? '👍 Thanks!' : '👎 Noted'}
-                      </span>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => rateResponse(index, 5)}
-                          className="p-1 text-dark-500 hover:text-green-400 hover:bg-green-500/10 rounded transition-colors"
-                          title="This was funny"
-                        >
-                          <ThumbsUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => rateResponse(index, 1)}
-                          className="p-1 text-dark-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                          title="Not great"
-                        >
-                          <ThumbsDown className="w-3.5 h-3.5" />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
+              <div className={message.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot'}>
+                {message.content}
               </div>
             </div>
           ))}

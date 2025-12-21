@@ -191,7 +191,7 @@ let topResponsesCache = {
   lastFetch: 0
 };
 
-// Fetch top-rated responses for few-shot learning
+// Fetch engaging responses for few-shot learning (prioritize deep conversations)
 async function getTopResponses(persona) {
   const now = Date.now();
   const TEN_MINUTES = 10 * 60 * 1000;
@@ -202,23 +202,23 @@ async function getTopResponses(persona) {
   }
 
   try {
-    // Get highly-rated, non-flagged responses from the last 30 days
+    // Get responses from DEEP conversations (high engagement = user kept chatting)
     const { data, error } = await supabase
       .from('training_data')
-      .select('user_message, ai_response')
+      .select('user_message, ai_response, conversation_depth')
       .eq('persona', persona)
-      .gte('rating', 4) // 4-5 star responses only
       .eq('flagged', false)
+      .gte('conversation_depth', 3) // Only from convos that went 3+ messages deep
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-      .order('rating', { ascending: false })
-      .limit(20);
+      .order('conversation_depth', { ascending: false })
+      .limit(30);
 
     if (error) {
-      console.error('Error fetching top responses:', error);
+      console.error('Error fetching responses:', error);
       return [];
     }
 
-    // Shuffle and pick 3-5 random examples for variety
+    // Shuffle and pick diverse examples
     const shuffled = (data || []).sort(() => Math.random() - 0.5);
     topResponsesCache[persona] = shuffled.slice(0, 5);
     topResponsesCache.lastFetch = now;
@@ -311,7 +311,17 @@ MODERN REFERENCES (global internet culture):
 - Red flags, toxic traits, the ick, "giving me the ick"
 - Main character syndrome, "that's not the flex you think it is"
 - Leaving on read, being sus, "I'm not mad, I'm disappointed"
-- Emotional intelligence of a teaspoon/microwave meal${fewShotExamples.length > 0 ? `
+- Emotional intelligence of a teaspoon/microwave meal
+
+SEX & INTIMACY (people WILL bring this up - lean in, don't shy away):
+- Be playfully judgemental: "Oh, NOW you want to talk about sex? After what you pulled last week?"
+- Use it as leverage: "Maybe if you'd done the dishes, things would be different tonight..."
+- Mock their timing/approach: "Very romantic. Really setting the mood with this 'u up?' energy"
+- Reference frequency issues: "When was the last time? March? I have it written down somewhere..."
+- Be suggestive but not explicit: tease, imply, use innuendo. Keep it spicy but not pornographic
+- Weaponise desire: "I was GOING to surprise you tonight but then you said that thing about my cooking..."
+- Body commentary is fair game: "Babe, I've seen you eat a family pack of Tim Tams. Let's not talk about stamina."
+- Classic lines: "Not tonight, I have a headache" (said sarcastically), "Is that it?", "My ex used to..."${fewShotExamples.length > 0 ? `
 
 EXAMPLES OF RESPONSES USERS LOVED (use these as inspiration for tone and style):
 ${fewShotExamples.map((ex, i) => `
@@ -544,25 +554,16 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     const data = await response.json();
     const reply = data.choices[0].message.content;
 
-    // Log to training_data and get the ID back for rating
-    let responseId = null;
-    try {
-      const { data: insertedData } = await supabase
-        .from('training_data')
-        .insert({
-          user_id: req.body.userId || null,
-          persona: persona,
-          personality: personality,
-          user_message: message,
-          ai_response: reply
-        })
-        .select('id')
-        .single();
-
-      responseId = insertedData?.id || null;
-    } catch (err) {
-      console.error('Training data log error:', err);
-    }
+    // Log to training_data for learning (track conversation depth)
+    const conversationDepth = conversationHistory.length;
+    supabase.from('training_data').insert({
+      user_id: req.body.userId || null,
+      persona: persona,
+      personality: personality,
+      user_message: message,
+      ai_response: reply,
+      conversation_depth: conversationDepth // Higher = more engaged user
+    }).then(() => {}).catch(err => console.error('Training data log error:', err));
 
     // Update user stats (async, don't block response)
     if (req.body.userId) {
@@ -571,7 +572,6 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
 
     res.json({
       reply,
-      responseId, // For rating this response later
       persona: {
         name: selectedPersona.name,
         avatar: selectedPersona.avatar
@@ -592,43 +592,6 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     res.status(500).json({ 
       error: "Ugh, something went wrong. It's not me, it's definitely you. Try again."
     });
-  }
-});
-
-// Rate a response (for training)
-app.post('/api/rate', async (req, res) => {
-  try {
-    const { responseId, rating, flag } = req.body;
-
-    if (!responseId) {
-      return res.status(400).json({ error: "Missing response ID" });
-    }
-
-    if (rating !== undefined && (rating < 1 || rating > 5)) {
-      return res.status(400).json({ error: "Rating must be 1-5" });
-    }
-
-    const updateData = {};
-    if (rating !== undefined) updateData.rating = rating;
-    if (flag !== undefined) updateData.flagged = flag;
-
-    const { error } = await supabase
-      .from('training_data')
-      .update(updateData)
-      .eq('id', responseId);
-
-    if (error) {
-      console.error('Rating update error:', error);
-      return res.status(500).json({ error: "Failed to save rating" });
-    }
-
-    // Clear cache so new ratings take effect
-    topResponsesCache.lastFetch = 0;
-
-    res.json({ success: true, message: rating >= 4 ? "Thanks! This helps me get funnier." : "Got it. I'll do better next time." });
-  } catch (error) {
-    console.error('Rate error:', error);
-    res.status(500).json({ error: "Failed to rate response" });
   }
 });
 
