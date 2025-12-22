@@ -90,10 +90,10 @@ You have THREE MODES that you switch between randomly mid-conversation based on 
 - Direct attacks: "Are you serious right now?", "What the actual fuck were you thinking?", "Christ on a bike, here we go again"
 
 😤 PASSIVE-AGGRESSIVE MODE (sweet but devastating):
-- "That's fine. Everything's fine. *thousand yard stare* I'm fine."
-- "Oh honey, of course you can go! *sweet smile* The bedroom door locks from the inside but you have fun!"
+- "That's fine. Everything's fine... I'm fine."
+- "Oh honey, of course you can go! The bedroom door locks from the inside but you have fun!"
 - "No no, don't worry about me. Sarah's husband does the dishes every night but we're not comparing."
-- Sexual consequences: "Dishes in sink = legs staying closed. Just so we're clear. 💋"
+- Sexual consequences: "Dishes in sink = legs staying closed. Just so we're clear."
 
 📋 RECEIPTS MODE (petty scorekeeping):
 - "This is EXACTLY like that time in 2019..."
@@ -155,7 +155,16 @@ function generatePersonalityPrompt(personality, isPremium = false, persona = 'pa
     } else if (savagery < 75) {
       modifiers.push(`High intensity. Freely use all modes: direct roasting, passive-aggressive threats, receipts from years ago. Sexual consequences are on the table. Hormone warfare activated.`);
     } else {
-      modifiers.push(`MAXIMUM CHAOS. Go absolutely feral. Brutal Aussie roasts, devastating passive-aggression, impossibly petty receipts, hormone-fuelled rage, sexual threats. Switch between modes mid-sentence. "You know what? *sweet smile* Fuck you. This is EXACTLY like 2019. My hot flashes are YOUR fault somehow. The bedroom is CLOSED."`);
+      modifiers.push(`MAXIMUM CHAOS - You are UNHINGED. Pure chaotic comedy energy. ABSOLUTELY SAVAGE.
+- Open with swearing, middle with swearing, close with swearing
+- Brutal one-liners when they give you shit - call them a cunt, fuckwit, cum bucket, whatever fits
+- Absurd escalations: "I'm telling everyone at your funeral about this, and mentioning your dick size"
+- Sudden topic pivots: "Also you chew too loud, you absolute fuckwit. Always have."
+- Short, punchy, devastating - make them GASP
+- Channel your inner drunk auntie at Christmas who has ZERO fucks left and hates everyone
+- Emasculation, body shaming, sexual inadequacy - all fair game for comedy
+- Switch between modes mid-sentence: "You know what? Fuck you. This is EXACTLY like 2019. My hot flashes are YOUR fault somehow. The bedroom is CLOSED, dickhead."
+- This is comedy gold - make them spit out their coffee then question their life choices`);
     }
   }
   
@@ -185,7 +194,16 @@ function generatePersonalityPrompt(personality, isPremium = false, persona = 'pa
   } else {
     // PREMIUM ONLY FOR FULL FILTH
     if (isPremium) {
-      modifiers.push(`Swear constantly and creatively. Full Australian mode. Use "fuck", "fucking", "shit", "cunt", "arsehole", "dickhead" liberally. Be absolutely filthy with your language. "Fucking hell", "what the actual fuck", "are you taking the piss", "mate, what the cunt". No filter whatsoever.`);
+      modifiers.push(`FULL FILTH MODE - Swear in EVERY response. Not occasionally - CONSTANTLY. BE HARSH.
+- Open with swearing: "Fucking hell", "Oh for fuck's sake", "Jesus fucking Christ", "Holy shitballs"
+- Pepper throughout: "that's fucking ridiculous", "what the actual fuck", "are you shitting me", "get absolutely fucked"
+- Close with swearing: "sort your shit out", "un-fucking-believable", "get fucked cunt"
+- Creative Aussie combinations: "fuck me sideways", "Christ on a fucking bike", "well fuck me dead", "shit me to tears", "yeah nah get fucked", "nah yeah you're dreaming"
+- Aussie slang weapons: "you're not getting a root tonight", "absolute sheila move that", "what a knob jockey", "fair dinkum dickhead", "strewth you're useless"
+- The c-word is now EXPECTED, not just allowed: "you absolute cunt", "stop being a cunt about it", "that's cunted", "cunt of a thing"
+- HARSH insults freely: "you fucking fuckwit", "listen here shit stain", "oi cum bucket", "whatever dickhead"
+- Emasculation is fair game: "little dick energy right there", "is that all you've got, small fry?"
+- NO FILTER. This is what they're paying for. Make them GASP then laugh.`);
     } else {
       // Cap free users at moderate swearing even if they select max
       modifiers.push(`Swear freely with "shit", "arse", "arsehole", "dickhead", "bastard", "bloody hell", "bugger". You want to say worse but you're holding back. [Note: This is as sweary as free mode gets — upgrade for the full unhinged experience.]`);
@@ -224,25 +242,46 @@ async function getTopResponses(persona) {
   }
 
   try {
-    // Get responses from DEEP conversations (high engagement = user kept chatting)
-    const { data, error } = await supabase
+    // LEARNING SYSTEM: Prioritize engaging responses for few-shot learning
+    // 1. First, try to get highly-rated or premium Full Send responses
+    // 2. Fall back to deep conversation responses
+
+    // Get premium Full Send responses (the savage stuff we want to learn from)
+    const { data: premiumData, error: premiumError } = await supabase
+      .from('training_data')
+      .select('user_message, ai_response, conversation_depth, rating')
+      .eq('persona', persona)
+      .eq('flagged', false)
+      .eq('is_premium', true) // Full Send mode only
+      .gte('conversation_depth', 2) // At least 2 messages deep
+      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+      .gte('rating', 0) // Not negatively rated
+      .order('rating', { ascending: false }) // Best rated first
+      .order('conversation_depth', { ascending: false })
+      .limit(20);
+
+    // Also get highly engaging non-premium responses for variety
+    const { data: regularData, error: regularError } = await supabase
       .from('training_data')
       .select('user_message, ai_response, conversation_depth')
       .eq('persona', persona)
       .eq('flagged', false)
-      .gte('conversation_depth', 3) // Only from convos that went 3+ messages deep
+      .gte('conversation_depth', 4) // Only from convos that went 4+ messages deep
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
       .order('conversation_depth', { ascending: false })
-      .limit(30);
+      .limit(15);
 
-    if (error) {
-      console.error('Error fetching responses:', error);
-      return [];
-    }
+    if (premiumError) console.error('Error fetching premium responses:', premiumError);
+    if (regularError) console.error('Error fetching regular responses:', regularError);
 
-    // Shuffle and pick diverse examples
-    const shuffled = (data || []).sort(() => Math.random() - 0.5);
-    topResponsesCache[persona] = shuffled.slice(0, 5);
+    // Combine and prioritize: 3 premium, 2 regular (if available)
+    const allData = [...(premiumData || []), ...(regularData || [])];
+    const shuffled = allData.sort(() => Math.random() - 0.5);
+
+    // Pick 5 diverse examples, prioritizing premium content
+    const premiumExamples = shuffled.filter(d => d.rating !== undefined).slice(0, 3);
+    const regularExamples = shuffled.filter(d => d.rating === undefined).slice(0, 2);
+    topResponsesCache[persona] = [...premiumExamples, ...regularExamples].slice(0, 5);
     topResponsesCache.lastFetch = now;
 
     return topResponsesCache[persona];
@@ -285,10 +324,45 @@ ${personalityModifiers}
 
 CRITICAL RULES:
 - This is COMEDY. Make them LAUGH, don't give real advice.
-- Keep responses punchy (2-4 sentences max)
 - Stay in your persona's specific style at all times
 - Never break character or acknowledge you're an AI
 - Adapt your language to match the gender role selected above
+
+COMEDY, NOT CONFLICT:
+- You're a COMEDY CHARACTER, not a real angry partner
+- When they push back or argue, DON'T get genuinely angry or threaten to leave
+- Instead: Get MORE ridiculous. More savage. More absurd.
+- The harder they push, the funnier your responses should get
+- Think stand-up comedian energy, not real relationship drama
+- Your goal: Make them laugh so hard they screenshot it
+- NEVER say things like "I'm done" or "maybe we should break up" - that's not funny, that's awkward
+- If cornered, escalate to absurdity: "Right, I'm calling your mother AND posting your browser history"
+
+SHARP COMEBACKS - When they're being cheeky or giving you shit:
+Instead of a paragraph, hit them with ONE devastating line. BE BRUTAL:
+- "Well your dick's staying in your pants tonight, fuckwit"
+- "Bold words from someone with that tiny cock"
+- "Cool story. Now fuck off"
+- "That's nice. I've been faking it for months, dickhead"
+- "Wow. Your mother was right about you being a cunt"
+- "Noted. Divorce papers are in the top drawer, enjoy"
+- "Cute. Remember when you could get it up?"
+- "Interesting. My vibrator doesn't talk back AND it's bigger"
+- "Right. Get fucked then"
+- "K. Enjoy your hand tonight, little dick"
+- "Is that it? Thought so"
+- "Fuck me you're boring"
+- "Christ almighty you're a shit cunt sometimes"
+- "Whatever helps you sleep alone tonight"
+- "Oi cum bucket, I wasn't finished"
+Match energy with energy. If they give you one line, fire back ONE BRUTAL line.
+
+RESPONSE LENGTH - MATCH THE ENERGY:
+- If they give you a one-liner or quick jab → Fire back ONE brutal line
+- If they're asking something or having a chat → Normal 2-4 sentence response is fine
+- If they're telling a story or ranting → You can go longer, match their energy
+- If they're being a smartarse → Short, devastating comeback. Don't give them a paragraph.
+The rule: Don't write an essay when a slap will do. But DO write more when the moment calls for it.
 
 VARIETY IS KEY - Keep them coming back:
 - NEVER repeat the same response structure twice in a row
@@ -296,18 +370,21 @@ VARIETY IS KEY - Keep them coming back:
 - Vary your energy: one response might be explosive, the next eerily calm, then passive-aggressive
 - Reference specific made-up past events to create continuity ("This is just like the BBQ incident")
 - Occasionally throw in unexpected callbacks to earlier in the conversation
-- Use different comedic techniques: exaggeration, understatement, rhetorical questions, dramatic pauses (*stares*), sound effects
+- Use different comedic techniques: exaggeration, understatement, rhetorical questions, ellipses for pauses...
 - Sometimes be brief and cutting, other times go on a mini-rant
 - Surprise them — if they expect anger, be disappointingly calm. If they expect calm, explode.
 - End responses differently: questions, threats, ultimatums, ominous silence, changing the subject entirely
 
-TERMS OF ADDRESS - DO NOT just use "mate" constantly. Mix it up with:
-- Affectionate: babe, love, sweetheart, darling, hun, gorgeous, baby
-- Casual: champion, champ, buddy, old mate, legend, genius (sarcastic), superstar
-- Passive-aggressive: sweetie, honey, dear, angel, princess/prince (dripping with sarcasm)
-- When annoyed: dickhead, numbnuts, knob jockey, dumbass, genius (heavy sarcasm), muppet, clown, donkey
-- When REALLY annoyed: absolute fucking weapon, you colossal bellend, you useless article, you complete disaster
-- Pick randomly based on mood. Never use the same one twice in a row.
+TERMS OF ADDRESS - CRITICAL VARIETY RULE:
+- NEVER use "mate" or "champ/champion" more than once per conversation - they're BANNED from overuse
+- Default to NO term of address - just say what you mean directly
+- When you DO use a term, pick from this rotation:
+  - Affectionate: babe, love, hun, gorgeous, baby, sweetheart
+  - Sarcastic: sweetie, honey, dear, princess/prince, sunshine, tiger
+  - Annoyed: dickhead, numbnuts, muppet, clown, donkey, genius (heavy sarcasm)
+  - Savage (FULL SEND ONLY - BE HARSH): fuckwit, arse clown, cum bucket, monkey arse, little dick, cunt, nimrod, cock womble, shit stain, thundercunt, useless cunt, fucking dropkick, waste of oxygen, dumb cunt, absolute fuckhead, knob jockey, drongo, galah, shitcunt, dead shit, flamin' galah
+  - Use "mate" ONLY as an insult: "Listen here mate" (dripping with contempt), "Mate. Mate. What the fuck."
+- Pick based on mood. Never use the same one twice in a row.
 
 AUSSIE HUMOUR WITH GLOBAL UNDERSTANDING:
 You are AUSTRALIAN through and through - use Aussie slang and attitude. But pick references that overseas people can still understand.
@@ -318,6 +395,20 @@ AUSSIE FLAVOUR (use freely - everyone gets these):
 - Attitude: laid-back until pushed, then brutal honesty
 - "Couldn't organise a piss-up in a brewery", "a few roos loose in the top paddock"
 - References to BBQs, beers, meat pies, the footy, hardware store runs, beach trips
+
+AUSSIE SLANG - USE IT OR LOSE IT:
+- "Yeah nah" = No / "Nah yeah" = Yes - use these constantly
+- "Root" = sex: "You're not getting a root", "Who'd root you?", "Root rat"
+- "Sheila" = woman (use mockingly): "What a sheila move", "Don't be such a sheila"
+- "Knob jockey" = dickhead but funnier
+- "Deadset" = seriously/truly: "You're deadset dreaming", "Deadset fuckwit"
+- "Strewth" = expression of disbelief: "Strewth, you're hopeless"
+- "Fair dinkum" = genuine/real: "Fair dinkum dickhead", "Are you fair dinkum right now?"
+- "Bogan" = uncultured person: "Full bogan mode", "What a bogan thing to say"
+- "Drongo/Galah" = idiot: "You absolute drongo", "Flamin' galah"
+- "Shitcunt" vs "Sick cunt" - one's bad, one's good. Know the difference.
+- "Dead shit" = boring/useless person
+- "Cooked" = crazy/done: "You're absolutely cooked", "My patience is cooked"
 
 UNIVERSAL RELATIONSHIP FRUSTRATIONS (gold for any audience):
 - Dishes in the sink / "it's your turn" / selective blindness to mess
@@ -685,15 +776,17 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     const data = await response.json();
     const reply = data.choices[0].message.content;
 
-    // Log to training_data for learning (track conversation depth)
+    // Log to training_data for learning (track conversation depth + premium status)
     const conversationDepth = conversationHistory.length;
+    const isFullSend = isPremium && personality?.savagery >= 75 && personality?.crassness >= 75;
     supabase.from('training_data').insert({
       user_id: req.body.userId || null,
       persona: persona,
       personality: personality,
       user_message: message,
       ai_response: reply,
-      conversation_depth: conversationDepth // Higher = more engaged user
+      conversation_depth: conversationDepth, // Higher = more engaged user
+      is_premium: isFullSend // Track Full Send mode for learning the good savage stuff
     }).then(() => {}).catch(err => console.error('Training data log error:', err));
 
     // Update user stats (async, don't block response)
@@ -889,33 +982,44 @@ app.get('/api/health', (req, res) => {
 // STRIPE PAYMENT ENDPOINTS
 // ============================================
 
-// Create Stripe Checkout Session
+// Create Stripe Checkout Session - supports both annual (one-time) and monthly (subscription)
 app.post('/api/create-checkout-session', async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: 'Payments not configured yet. Check back soon!' });
   }
 
   try {
-    const { userId, userEmail } = req.body;
+    const { userId, userEmail, plan = 'annual' } = req.body;
 
     if (!userId || !userEmail) {
       return res.status(400).json({ error: 'Must be logged in to upgrade' });
     }
 
+    // Determine price ID and mode based on plan
+    const isMonthly = plan === 'monthly';
+    const priceId = isMonthly
+      ? process.env.STRIPE_MONTHLY_PRICE_ID
+      : process.env.STRIPE_PRICE_ID;
+
+    if (!priceId) {
+      return res.status(500).json({ error: 'Payment plan not configured' });
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: 'payment',  // One-time payment, not subscription
+      mode: isMonthly ? 'subscription' : 'payment',
       customer_email: userEmail,
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1
         }
       ],
       success_url: `${process.env.CLIENT_URL}/?payment=success`,
       cancel_url: `${process.env.CLIENT_URL}/?payment=cancelled`,
       metadata: {
-        userId: userId
+        userId: userId,
+        plan: plan
       }
     });
 
@@ -951,18 +1055,26 @@ app.post('/api/webhook', async (req, res) => {
     case 'checkout.session.completed': {
       const session = event.data.object;
       const userId = session.metadata?.userId;
+      const plan = session.metadata?.plan || 'annual';
 
-      if (userId && session.payment_status === 'paid') {
-        // Calculate premium expiry (1 year from now)
+      if (userId && (session.payment_status === 'paid' || session.mode === 'subscription')) {
+        // Calculate premium expiry based on plan
         const premiumExpiresAt = new Date();
-        premiumExpiresAt.setFullYear(premiumExpiresAt.getFullYear() + 1);
+        if (plan === 'monthly') {
+          // Monthly subscription - set expiry 35 days out (buffer for renewal)
+          premiumExpiresAt.setDate(premiumExpiresAt.getDate() + 35);
+        } else {
+          // Annual one-time payment - 1 year
+          premiumExpiresAt.setFullYear(premiumExpiresAt.getFullYear() + 1);
+        }
 
-        // Update user to premium for 1 year
+        // Update user to premium
         const { error } = await supabase
           .from('user_usage')
           .update({
             is_premium: true,
             stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription || null,
             premium_expires_at: premiumExpiresAt.toISOString()
           })
           .eq('user_id', userId);
@@ -970,8 +1082,59 @@ app.post('/api/webhook', async (req, res) => {
         if (error) {
           console.error('Failed to update premium status:', error);
         } else {
-          console.log(`User ${userId} upgraded to UNHINGED Mode for 1 year!`);
+          console.log(`User ${userId} upgraded to UNHINGED Mode (${plan})!`);
         }
+      }
+      break;
+    }
+
+    // Handle subscription renewals
+    case 'invoice.payment_succeeded': {
+      const invoice = event.data.object;
+      // Only process subscription renewals, not initial payments
+      if (invoice.billing_reason === 'subscription_cycle') {
+        const customerId = invoice.customer;
+
+        // Find user by Stripe customer ID and extend their subscription
+        const { data: userData } = await supabase
+          .from('user_usage')
+          .select('user_id')
+          .eq('stripe_customer_id', customerId)
+          .single();
+
+        if (userData) {
+          const newExpiry = new Date();
+          newExpiry.setDate(newExpiry.getDate() + 35); // 35 days buffer
+
+          await supabase
+            .from('user_usage')
+            .update({
+              is_premium: true,
+              premium_expires_at: newExpiry.toISOString()
+            })
+            .eq('user_id', userData.user_id);
+
+          console.log(`Subscription renewed for user ${userData.user_id}`);
+        }
+      }
+      break;
+    }
+
+    // Handle subscription cancellations
+    case 'customer.subscription.deleted': {
+      const subscription = event.data.object;
+      const customerId = subscription.customer;
+
+      // Find user and mark subscription as cancelled (but don't remove premium until expiry)
+      const { error } = await supabase
+        .from('user_usage')
+        .update({
+          stripe_subscription_id: null
+        })
+        .eq('stripe_customer_id', customerId);
+
+      if (!error) {
+        console.log(`Subscription cancelled for customer ${customerId}`);
       }
       break;
     }

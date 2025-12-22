@@ -97,12 +97,16 @@ CREATE TABLE IF NOT EXISTS training_data (
   user_message TEXT NOT NULL,
   ai_response TEXT NOT NULL,
   conversation_depth INTEGER DEFAULT 0, -- Higher = user stayed longer (more engaging)
+  is_premium BOOLEAN DEFAULT FALSE, -- Was this a premium/Full Send conversation
+  rating INTEGER DEFAULT 0, -- Manual rating: -1 bad, 0 neutral, 1 good, 2 excellent
   flagged BOOLEAN DEFAULT FALSE, -- for bad responses to exclude
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Add conversation_depth if table already exists
+-- Add columns if table already exists
 ALTER TABLE training_data ADD COLUMN IF NOT EXISTS conversation_depth INTEGER DEFAULT 0;
+ALTER TABLE training_data ADD COLUMN IF NOT EXISTS is_premium BOOLEAN DEFAULT FALSE;
+ALTER TABLE training_data ADD COLUMN IF NOT EXISTS rating INTEGER DEFAULT 0;
 
 CREATE INDEX IF NOT EXISTS idx_training_data_persona ON training_data(persona);
 CREATE INDEX IF NOT EXISTS idx_training_data_depth ON training_data(conversation_depth);

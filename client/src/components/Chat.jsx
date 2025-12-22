@@ -148,13 +148,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
     checkPremiumStatus()
   }, [isAuthenticated, user?.id])
 
-  const handleUpgrade = async () => {
-    // TEMP: Show coming soon modal while payments are being set up
-    setShowComingSoon(true)
-    return
-
-    // Original payment code - uncomment when Stripe is ready:
-    /*
+  const handleUpgrade = async (plan = 'annual') => {
     if (!user?.id || !user?.email) {
       onShowAuth()
       return
@@ -167,7 +161,8 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
-          userEmail: user.email
+          userEmail: user.email,
+          plan: plan
         })
       })
 
@@ -184,7 +179,6 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
     } finally {
       setIsUpgrading(false)
     }
-    */
   }
 
   const handleWaitlistSubmit = async (e) => {
@@ -502,41 +496,47 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                   Your free trial has ended. Upgrade to keep the chaos going forever.
                 </p>
 
-                <div className="bg-dark-800 rounded-xl p-4 mb-6">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-3xl font-bold">$49.99</span>
+                {/* Annual Option - Best Value */}
+                <div className="bg-dark-800 rounded-xl p-4 mb-3 border-2 border-green-500 relative">
+                  <span className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">
+                    BEST VALUE
+                  </span>
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className="text-2xl font-bold">$49.99</span>
                     <span className="text-dark-400">/year</span>
                   </div>
-                  <p className="text-green-400 text-xs mb-3">Save 40% vs monthly</p>
-                  <ul className="text-sm text-dark-300 space-y-1 text-left">
-                    <li>✓ Unlimited messages</li>
-                    <li>✓ Full Send Mode unlocked</li>
-                    <li>✓ Maximum savagery enabled</li>
-                    <li>✓ No daily limits</li>
-                  </ul>
+                  <p className="text-green-400 text-xs mb-3">Save 40% vs monthly ($4.17/mo)</p>
+                  <button
+                    onClick={() => handleUpgrade('annual')}
+                    disabled={isUpgrading}
+                    className="btn-primary w-full text-sm"
+                  >
+                    {isUpgrading ? 'Loading...' : 'Get Annual Access'}
+                  </button>
                 </div>
 
-                <p className="text-dark-500 text-xs mb-4">
-                  Payments coming soon! Join the waitlist:
-                </p>
+                {/* Monthly Option */}
+                <div className="bg-dark-800 rounded-xl p-4 mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <span className="text-xl font-bold">$6.99</span>
+                    <span className="text-dark-400">/month</span>
+                  </div>
+                  <p className="text-dark-500 text-xs mb-3">Cancel anytime</p>
+                  <button
+                    onClick={() => handleUpgrade('monthly')}
+                    disabled={isUpgrading}
+                    className="btn-secondary w-full text-sm"
+                  >
+                    {isUpgrading ? 'Loading...' : 'Go Monthly'}
+                  </button>
+                </div>
 
-                {!waitlistSubmitted ? (
-                  <form onSubmit={handleWaitlistSubmit} className="space-y-3">
-                    <input
-                      type="email"
-                      value={waitlistEmail}
-                      onChange={(e) => setWaitlistEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      className="input-field w-full text-center"
-                      required
-                    />
-                    <button type="submit" className="btn-primary w-full">
-                      Notify Me When Ready
-                    </button>
-                  </form>
-                ) : (
-                  <p className="text-green-400 text-sm">You're on the list!</p>
-                )}
+                <ul className="text-xs text-dark-400 space-y-1 text-left mb-4">
+                  <li>✓ Unlimited messages</li>
+                  <li>✓ Full Send Mode unlocked</li>
+                  <li>✓ Maximum savagery enabled</li>
+                  <li>✓ No daily limits</li>
+                </ul>
               </>
             ) : (
               // Logged in, hasn't used trial - show free trial

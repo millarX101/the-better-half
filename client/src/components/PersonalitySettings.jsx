@@ -96,18 +96,24 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="bg-dark-900 border border-dark-700 rounded-2xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl">
-        <button 
-          onClick={onToggle}
-          className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors"
-        >
-          <X className="w-5 h-5 text-dark-400" />
-        </button>
+      <div className="bg-dark-900 border border-dark-700 rounded-2xl max-w-md w-full relative max-h-[90vh] shadow-2xl flex flex-col">
+        {/* Sticky Header */}
+        <div className="sticky top-0 bg-dark-900 p-4 pb-2 border-b border-dark-800 rounded-t-2xl z-10">
+          <button
+            onClick={onToggle}
+            className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-dark-400" />
+          </button>
 
-        <h2 className="font-display text-xl font-bold mb-2">Customise Your Other Half</h2>
-        <p className="text-dark-400 text-sm mb-6">
-          Dial in exactly how much relationship realness you can handle.
-        </p>
+          <h2 className="font-display text-xl font-bold mb-1">Customise Your Other Half</h2>
+          <p className="text-dark-400 text-sm">
+            Dial in exactly how much relationship realness you can handle.
+          </p>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 pt-4">
 
         {/* Full Send Mode Toggle */}
         <div
@@ -243,13 +249,17 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
             </div>
           </div>
         )}
+        </div>
 
-        <button
-          onClick={onToggle}
-          className="btn-primary w-full mt-6"
-        >
-          Save & Close
-        </button>
+        {/* Sticky Footer with Save Button */}
+        <div className="sticky bottom-0 bg-dark-900 p-4 pt-3 border-t border-dark-800 rounded-b-2xl">
+          <button
+            onClick={onToggle}
+            className="btn-primary w-full"
+          >
+            Save & Close
+          </button>
+        </div>
 
         {/* Paywall Popup */}
         {showPaywall && (
@@ -257,7 +267,7 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
             <div className="card max-w-sm w-full max-h-[85vh] overflow-y-auto p-6 text-center relative my-4">
               <button
                 onClick={() => setShowPaywall(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors"
+                className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors z-10"
               >
                 <X className="w-5 h-5 text-dark-400" />
               </button>
@@ -267,35 +277,75 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
               </div>
 
               <h3 className="font-display text-2xl font-bold mb-2">Unlock Full Send Mode</h3>
-              <p className="text-dark-400 text-sm mb-6">
-                Get maximum savagery, brutal honesty, full bogan language, and absolutely no filter.
-                Your partner will hold nothing back.
+              <p className="text-dark-400 text-sm mb-4">
+                Maximum chaos. No filter. Full bogan.
               </p>
 
-              <div className="bg-dark-800 rounded-xl p-4 mb-6">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-3xl font-bold">$49.99</span>
+              {/* Annual Option - Best Value */}
+              <div className="bg-dark-800 rounded-xl p-4 mb-3 border-2 border-green-500 relative">
+                <span className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">
+                  BEST VALUE
+                </span>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <span className="text-2xl font-bold">$49.99</span>
                   <span className="text-dark-400">/year</span>
                 </div>
-                <p className="text-green-400 text-xs mb-3">Save 40% vs monthly ($6.99/mo)</p>
-                <ul className="text-sm text-dark-300 space-y-1">
-                  <li>✓ Unlimited messages</li>
-                  <li>✓ UNHINGED Mode unlocked</li>
-                  <li>✓ Maximum crassness enabled</li>
-                  <li>✓ No daily limits</li>
-                  <li>✓ 1 year access</li>
+                <p className="text-green-400 text-xs mb-3">Save 40% ($4.17/mo)</p>
+                <button
+                  onClick={handleUpgradeClick}
+                  className="btn-primary w-full text-sm"
+                >
+                  Get Annual Access
+                </button>
+              </div>
+
+              {/* Monthly Option */}
+              <div className="bg-dark-800 rounded-xl p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <span className="font-bold">$6.99</span>
+                    <span className="text-dark-400 text-sm">/month</span>
+                    <p className="text-dark-500 text-xs">Cancel anytime</p>
+                  </div>
+                  <button
+                    onClick={handleUpgradeClick}
+                    className="btn-secondary text-sm px-4"
+                  >
+                    Go Monthly
+                  </button>
+                </div>
+              </div>
+
+              {/* Features List */}
+              <div className="text-left mb-4">
+                <p className="text-xs text-dark-500 uppercase tracking-wider mb-2">What you get:</p>
+                <ul className="text-sm text-dark-300 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span><strong>Unlimited messages</strong> — no daily caps</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span><strong>Full Send Mode</strong> — maximum savagery unlocked</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span><strong>No filter language</strong> — f-bombs, c-bombs, the lot</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span><strong>All personality sliders</strong> — full customisation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span><strong>Brutal honesty mode</strong> — no sugarcoating</span>
+                  </li>
                 </ul>
               </div>
 
               <button
-                onClick={handleUpgradeClick}
-                className="btn-primary w-full mb-3"
-              >
-                Upgrade to Premium
-              </button>
-              <button
                 onClick={() => setShowPaywall(false)}
-                className="text-dark-400 text-sm hover:text-white transition-colors"
+                className="text-dark-500 text-xs hover:text-dark-300 transition-colors"
               >
                 Maybe later
               </button>

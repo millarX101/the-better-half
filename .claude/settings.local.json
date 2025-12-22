@@ -12,7 +12,8 @@
       "Bash(npm install:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nProduction deployment: Railway + Netlify setup\n\n- Add railway.json for server deployment config\n- Add premium_expires_at column to schema\n- Fix API URL handling for production\n- Add Stripe payment integration\n- Update PersonalitySettings with Full Send Mode paywall\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
-      "Bash(ls -la \"c:\\\\Users\\\\User\\\\Desktop\\\\the-better-half\\\\client\\\\src\\\\components\"\" | grep -i \"price|payment|premium|paywall \")"
+      "Bash(ls -la \"c:\\\\Users\\\\User\\\\Desktop\\\\the-better-half\\\\client\\\\src\\\\components\"\" | grep -i \"price|payment|premium|paywall \")",
+      "Bash(cat:*)"
     ]
   }
 }
