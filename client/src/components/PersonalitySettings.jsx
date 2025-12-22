@@ -253,8 +253,8 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
 
         {/* Paywall Popup */}
         {showPaywall && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-            <div className="card max-w-sm w-full p-6 text-center relative">
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] flex items-center justify-center p-4 overflow-y-auto">
+            <div className="card max-w-sm w-full max-h-[85vh] overflow-y-auto p-6 text-center relative my-4">
               <button
                 onClick={() => setShowPaywall(false)}
                 className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors"

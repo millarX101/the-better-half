@@ -745,12 +745,27 @@ app.get('/api/user-status', async (req, res) => {
       return res.json({ isPremium: false, streak: null });
     }
 
-    // Get premium status
+    // Get premium status and trial info
     const { data: user, error } = await supabase
       .from('user_usage')
-      .select('is_premium')
+      .select('is_premium, trial_used, premium_expires_at')
       .eq('user_id', userId)
       .single();
+
+    // Check if premium has expired
+    let isPremium = user?.is_premium || false;
+    if (isPremium && user?.premium_expires_at) {
+      const expiresAt = new Date(user.premium_expires_at);
+      if (expiresAt < new Date()) {
+        // Premium/trial has expired
+        isPremium = false;
+        // Update the database
+        await supabase
+          .from('user_usage')
+          .update({ is_premium: false })
+          .eq('user_id', userId);
+      }
+    }
 
     // Get/update streak
     const today = new Date().toISOString().split('T')[0];
@@ -823,7 +838,8 @@ app.get('/api/user-status', async (req, res) => {
     }
 
     res.json({
-      isPremium: user?.is_premium || false,
+      isPremium: isPremium,
+      trialUsed: user?.trial_used || false,
       streak: streakData ? {
         current: streakData.current_streak,
         longest: streakData.longest_streak,
@@ -993,6 +1009,66 @@ app.post('/api/waitlist', async (req, res) => {
   } catch (err) {
     console.error('Waitlist error:', err);
     res.json({ success: true }); // Don't block UX on errors
+  }
+});
+
+// ============================================
+// FREE TRIAL ENDPOINT
+// ============================================
+app.post('/api/start-trial', async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Must be logged in to start trial' });
+    }
+
+    // Check if user already used their trial
+    const { data: existingUser, error: fetchError } = await supabase
+      .from('user_usage')
+      .select('trial_used, is_premium')
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error checking trial status:', fetchError);
+      return res.status(500).json({ error: 'Failed to check trial status' });
+    }
+
+    // If user is already premium, no need for trial
+    if (existingUser?.is_premium) {
+      return res.json({ success: true, message: 'Already premium' });
+    }
+
+    // If trial already used, reject
+    if (existingUser?.trial_used) {
+      return res.status(400).json({ error: 'Free trial already used. Upgrade to premium for unlimited access!' });
+    }
+
+    // Calculate trial expiry (7 days from now)
+    const trialExpiresAt = new Date();
+    trialExpiresAt.setDate(trialExpiresAt.getDate() + 7);
+
+    // Start the trial
+    const { error: updateError } = await supabase
+      .from('user_usage')
+      .upsert({
+        user_id: userId,
+        is_premium: true,
+        trial_used: true,
+        premium_expires_at: trialExpiresAt.toISOString()
+      }, { onConflict: 'user_id' });
+
+    if (updateError) {
+      console.error('Error starting trial:', updateError);
+      return res.status(500).json({ error: 'Failed to start trial' });
+    }
+
+    console.log(`User ${userId} started 7-day free trial!`);
+    res.json({ success: true, expiresAt: trialExpiresAt.toISOString() });
+  } catch (err) {
+    console.error('Trial error:', err);
+    res.status(500).json({ error: 'Failed to start trial' });
   }
 });
 

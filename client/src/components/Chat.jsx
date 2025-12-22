@@ -92,6 +92,8 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   const [showComingSoon, setShowComingSoon] = useState(false)
   const [waitlistEmail, setWaitlistEmail] = useState('')
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false)
+  const [trialUsed, setTrialUsed] = useState(false)
+  const [isStartingTrial, setIsStartingTrial] = useState(false)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -132,6 +134,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
             const data = await response.json()
             setIsPremium(data.isPremium || false)
             setStreak(data.streak || null)
+            setTrialUsed(data.trialUsed || false)
             // Set premium users to full swear mode by default
             if (data.isPremium) {
               setPersonality(PREMIUM_PERSONALITY)
@@ -199,6 +202,38 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
       console.error('Waitlist error:', err)
       // Still show success - we don't want to block the UX
       setWaitlistSubmitted(true)
+    }
+  }
+
+  const handleStartTrial = async () => {
+    if (!user?.id) {
+      onShowAuth()
+      return
+    }
+
+    setIsStartingTrial(true)
+    try {
+      const response = await fetch(`${API_URL}/api/start-trial`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setIsPremium(true)
+        setTrialUsed(true)
+        setPersonality(PREMIUM_PERSONALITY)
+        setShowComingSoon(false)
+      } else {
+        setError(data.error || 'Failed to start trial')
+      }
+    } catch (err) {
+      console.error('Trial error:', err)
+      setError('Failed to start trial')
+    } finally {
+      setIsStartingTrial(false)
     }
   }
 
@@ -425,59 +460,112 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
         </form>
       </div>
 
-      {/* Coming Soon Modal */}
+      {/* Free Trial / Upgrade Modal */}
       {showComingSoon && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-          <div className="card max-w-sm w-full p-6 text-center relative">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="card max-w-sm w-full max-h-[85vh] overflow-y-auto p-6 text-center relative my-4">
             <button
               onClick={() => setShowComingSoon(false)}
-              className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors text-dark-400 hover:text-white"
+              className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors text-dark-400 hover:text-white z-10"
             >
               ✕
             </button>
 
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-3xl">
-              🚀
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-3xl">
+              🔥
             </div>
 
-            <h3 className="font-display text-2xl font-bold mb-2">Premium Coming Soon!</h3>
+            <h3 className="font-display text-2xl font-bold mb-2">
+              {trialUsed ? 'Upgrade to Premium' : 'Try Full Send Mode FREE!'}
+            </h3>
 
-            {!waitlistSubmitted ? (
+            {!isAuthenticated ? (
+              // Not logged in - prompt to sign up
               <>
                 <p className="text-dark-400 text-sm mb-6">
-                  We're setting up payments now. Drop your email and we'll let you know the second Full Send Mode goes live.
-                </p>
-
-                <form onSubmit={handleWaitlistSubmit} className="space-y-3">
-                  <input
-                    type="email"
-                    value={waitlistEmail}
-                    onChange={(e) => setWaitlistEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    className="input-field w-full text-center"
-                    required
-                  />
-                  <button type="submit" className="btn-primary w-full">
-                    Notify Me
-                  </button>
-                </form>
-
-                <p className="text-dark-600 text-xs mt-4">
-                  No spam, just one email when we launch.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="text-4xl mb-4">🎉</div>
-                <p className="text-dark-300 text-sm mb-6">
-                  You're on the list! We'll email you the moment Premium drops.
+                  Get 7 days of maximum savagery, brutal honesty, and absolutely no filter. No credit card needed.
                 </p>
                 <button
-                  onClick={() => setShowComingSoon(false)}
-                  className="btn-primary w-full"
+                  onClick={() => { setShowComingSoon(false); onShowAuth(); }}
+                  className="btn-primary w-full mb-4"
                 >
-                  Back to Roasting
+                  Sign Up to Claim Free Trial
                 </button>
+                <p className="text-dark-600 text-xs">
+                  Already have an account? Sign in to claim your trial.
+                </p>
+              </>
+            ) : trialUsed ? (
+              // Already used trial - show upgrade options
+              <>
+                <p className="text-dark-400 text-sm mb-4">
+                  Your free trial has ended. Upgrade to keep the chaos going forever.
+                </p>
+
+                <div className="bg-dark-800 rounded-xl p-4 mb-6">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <span className="text-3xl font-bold">$49.99</span>
+                    <span className="text-dark-400">/year</span>
+                  </div>
+                  <p className="text-green-400 text-xs mb-3">Save 40% vs monthly</p>
+                  <ul className="text-sm text-dark-300 space-y-1 text-left">
+                    <li>✓ Unlimited messages</li>
+                    <li>✓ Full Send Mode unlocked</li>
+                    <li>✓ Maximum savagery enabled</li>
+                    <li>✓ No daily limits</li>
+                  </ul>
+                </div>
+
+                <p className="text-dark-500 text-xs mb-4">
+                  Payments coming soon! Join the waitlist:
+                </p>
+
+                {!waitlistSubmitted ? (
+                  <form onSubmit={handleWaitlistSubmit} className="space-y-3">
+                    <input
+                      type="email"
+                      value={waitlistEmail}
+                      onChange={(e) => setWaitlistEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="input-field w-full text-center"
+                      required
+                    />
+                    <button type="submit" className="btn-primary w-full">
+                      Notify Me When Ready
+                    </button>
+                  </form>
+                ) : (
+                  <p className="text-green-400 text-sm">You're on the list!</p>
+                )}
+              </>
+            ) : (
+              // Logged in, hasn't used trial - show free trial
+              <>
+                <p className="text-dark-400 text-sm mb-6">
+                  Get 7 days of maximum savagery, brutal honesty, and absolutely no filter. No credit card needed.
+                </p>
+
+                <div className="bg-dark-800 rounded-xl p-4 mb-6">
+                  <p className="text-lg font-bold text-green-400 mb-2">FREE for 7 days</p>
+                  <ul className="text-sm text-dark-300 space-y-1 text-left">
+                    <li>✓ Unlimited messages</li>
+                    <li>✓ Full Send Mode unlocked</li>
+                    <li>✓ Maximum crassness enabled</li>
+                    <li>✓ Absolutely no filter</li>
+                  </ul>
+                </div>
+
+                <button
+                  onClick={handleStartTrial}
+                  disabled={isStartingTrial}
+                  className="btn-primary w-full mb-3"
+                >
+                  {isStartingTrial ? 'Starting...' : 'Start Free Trial'}
+                </button>
+
+                <p className="text-dark-600 text-xs">
+                  No credit card required. Cancel anytime.
+                </p>
               </>
             )}
           </div>

@@ -5,6 +5,7 @@ import Chat from './components/Chat'
 import AuthModal from './components/AuthModal'
 import AgeGate from './components/AgeGate'
 import PartnerSetup, { getPartnerPrefs } from './components/PartnerSetup'
+import LegalPages from './components/LegalPages'
 import { useState, useEffect } from 'react'
 
 function App() {
@@ -47,16 +48,17 @@ function App() {
                 />
               } 
             />
-            <Route 
-              path="/chat/:persona" 
+            <Route
+              path="/chat/:persona"
               element={
-                <Chat 
+                <Chat
                   onShowAuth={() => setShowAuth(true)}
                   onShowPartnerSetup={() => setShowPartnerSetup(true)}
                   partnerPrefs={partnerPrefs}
                 />
-              } 
+              }
             />
+            <Route path="/:page" element={<LegalPages />} />
           </Routes>
           
           {showAuth && (
