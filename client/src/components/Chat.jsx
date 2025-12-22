@@ -72,7 +72,7 @@ function getRandomStarter(personaId) {
   return messages[Math.floor(Math.random() * messages.length)]
 }
 
-export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
+export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onPartnerPrefsChange }) {
   const { persona: personaId = 'partner' } = useParams()
   useNavigate() // keep for potential future use
   const { user, isAuthenticated } = useAuth()

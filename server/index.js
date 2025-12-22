@@ -242,46 +242,25 @@ async function getTopResponses(persona) {
   }
 
   try {
-    // LEARNING SYSTEM: Prioritize engaging responses for few-shot learning
-    // 1. First, try to get highly-rated or premium Full Send responses
-    // 2. Fall back to deep conversation responses
-
-    // Get premium Full Send responses (the savage stuff we want to learn from)
-    const { data: premiumData, error: premiumError } = await supabase
-      .from('training_data')
-      .select('user_message, ai_response, conversation_depth, rating')
-      .eq('persona', persona)
-      .eq('flagged', false)
-      .eq('is_premium', true) // Full Send mode only
-      .gte('conversation_depth', 2) // At least 2 messages deep
-      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-      .gte('rating', 0) // Not negatively rated
-      .order('rating', { ascending: false }) // Best rated first
-      .order('conversation_depth', { ascending: false })
-      .limit(20);
-
-    // Also get highly engaging non-premium responses for variety
-    const { data: regularData, error: regularError } = await supabase
+    // Simple query that works with or without is_premium/rating columns
+    const { data, error } = await supabase
       .from('training_data')
       .select('user_message, ai_response, conversation_depth')
       .eq('persona', persona)
       .eq('flagged', false)
-      .gte('conversation_depth', 4) // Only from convos that went 4+ messages deep
+      .gte('conversation_depth', 3)
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
       .order('conversation_depth', { ascending: false })
-      .limit(15);
+      .limit(30);
 
-    if (premiumError) console.error('Error fetching premium responses:', premiumError);
-    if (regularError) console.error('Error fetching regular responses:', regularError);
+    if (error) {
+      console.error('Error fetching responses:', error);
+      return [];
+    }
 
-    // Combine and prioritize: 3 premium, 2 regular (if available)
-    const allData = [...(premiumData || []), ...(regularData || [])];
-    const shuffled = allData.sort(() => Math.random() - 0.5);
-
-    // Pick 5 diverse examples, prioritizing premium content
-    const premiumExamples = shuffled.filter(d => d.rating !== undefined).slice(0, 3);
-    const regularExamples = shuffled.filter(d => d.rating === undefined).slice(0, 2);
-    topResponsesCache[persona] = [...premiumExamples, ...regularExamples].slice(0, 5);
+    // Shuffle and pick diverse examples
+    const shuffled = (data || []).sort(() => Math.random() - 0.5);
+    topResponsesCache[persona] = shuffled.slice(0, 5);
     topResponsesCache.lastFetch = now;
 
     return topResponsesCache[persona];

@@ -52,6 +52,7 @@ function AppContent() {
                 onShowAuth={() => setShowAuth(true)}
                 onShowPartnerSetup={() => setShowPartnerSetup(true)}
                 partnerPrefs={partnerPrefs}
+                onPartnerPrefsChange={handlePartnerPrefsChange}
               />
             }
           />
@@ -62,6 +63,7 @@ function AppContent() {
                 onShowAuth={() => setShowAuth(true)}
                 onShowPartnerSetup={() => setShowPartnerSetup(true)}
                 partnerPrefs={partnerPrefs}
+                onPartnerPrefsChange={handlePartnerPrefsChange}
               />
             }
           />
