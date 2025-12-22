@@ -15,7 +15,8 @@
       "Bash(ls -la \"c:\\\\Users\\\\User\\\\Desktop\\\\the-better-half\\\\client\\\\src\\\\components\"\" | grep -i \"price|payment|premium|paywall \")",
       "Bash(cat:*)",
       "Bash(git push)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd upgrade screen after signup\n\n- Show premium options \\(monthly/annual\\) immediately after signup\n- Clickable payment buttons that launch Stripe checkout\n- Skip option to continue with free tier\n- Features list showing what premium includes\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd upgrade screen after signup\n\n- Show premium options \\(monthly/annual\\) immediately after signup\n- Clickable payment buttons that launch Stripe checkout\n- Skip option to continue with free tier\n- Features list showing what premium includes\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd custom Supabase email templates\n\n- Confirm signup email with cheeky \"Well, look who showed up\" copy\n- Magic link email for passwordless login\n- Password reset email with playful tone\n- Invite user email template\n- All styled to match app brand \\(dark theme, pink gradient\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
