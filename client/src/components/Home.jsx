@@ -2,18 +2,25 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Sparkles, Settings } from 'lucide-react'
 
-const PERSONAS = [
-  {
+const PERSONAS = {
+  partner: {
     id: 'partner',
     name: 'Your Other Half',
     title: 'Chaotically Realistic',
-    description: "Roasts you, guilt trips you, brings up 2019, blames their hormones. Just like the real thing.",
     color: 'from-pink-500 to-orange-500',
     avatar: '/avatars/realist.svg',
     avatarFemale: '/avatars/realist-female.svg',
-    traits: ['Unpredictable moods', 'Keeps receipts', 'Hormone warfare']
+    // Default / Partner mode
+    description: "Roasts you, guilt trips you, brings up 2019, blames their hormones. Just like the real thing.",
+    traits: ['Unpredictable moods', 'Keeps receipts', 'Hormone warfare'],
+    // Wife mode
+    wifeDescription: "Roasts you, guilt trips you, brings up 2019, blames their hormones. Just like the real thing.",
+    wifeTraits: ['Unpredictable moods', 'Keeps receipts', 'Hormone warfare'],
+    // Husband mode
+    husbandDescription: "Overly needy, always wants more action, mostly drinks beer and farts. Selective hearing enabled.",
+    husbandTraits: ['Selective hearing', 'Couch potato', 'Thinks he\'s hilarious']
   },
-  {
+  alien: {
     id: 'alien',
     name: 'Zyx-9',
     title: 'The Alien Observer',
@@ -21,9 +28,15 @@ const PERSONAS = [
     color: 'from-green-500 to-emerald-500',
     avatar: '/avatars/alien.svg',
     avatarFemale: '/avatars/alien-female.svg',
-    traits: ['Outside perspective', 'Confused by monogamy', 'Weirdly helpful']
+    traits: ['Outside perspective', 'Confused by monogamy', 'Weirdly helpful'],
+    wifeDescription: "Came to study human wives. Is fascinated by their ability to remember everything.",
+    wifeTraits: ['Outside perspective', 'Studying wine culture', 'Weirdly helpful'],
+    husbandDescription: "Came to study human husbands. Cannot understand why they won't ask for directions.",
+    husbandTraits: ['Outside perspective', 'Studying beer culture', 'Confused by sports']
   }
-]
+}
+
+const PERSONA_LIST = Object.values(PERSONAS)
 
 export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   const navigate = useNavigate()
@@ -114,10 +127,25 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
           <p className="text-center text-dark-400 mb-10">Pick the partner energy you need right now. They're all going to judge you.</p>
           
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {PERSONAS.map((persona) => {
-              const avatarSrc = partnerPrefs?.partnerGender === 'wife'
+            {PERSONA_LIST.map((persona) => {
+              const gender = partnerPrefs?.partnerGender
+              const avatarSrc = gender === 'wife'
                 ? persona.avatarFemale
                 : persona.avatar
+
+              // Get gender-specific description and traits
+              const description = gender === 'husband'
+                ? persona.husbandDescription
+                : gender === 'wife'
+                  ? persona.wifeDescription
+                  : persona.description
+
+              const traits = gender === 'husband'
+                ? persona.husbandTraits
+                : gender === 'wife'
+                  ? persona.wifeTraits
+                  : persona.traits
+
               return (
                 <div
                   key={persona.id}
@@ -133,7 +161,7 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   <h3 className="font-display text-xl font-bold text-center mb-1">
                     {persona.name}
                   </h3>
@@ -141,12 +169,12 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                     {persona.title}
                   </p>
                   <p className="text-dark-400 text-sm text-center mb-4">
-                    {persona.description}
+                    {description}
                   </p>
-                  
+
                   <div className="flex flex-wrap gap-2 justify-center">
-                    {persona.traits.map((trait, idx) => (
-                      <span 
+                    {traits.map((trait, idx) => (
+                      <span
                         key={idx}
                         className="text-xs bg-dark-800 text-dark-300 px-2 py-1 rounded-full"
                       >
@@ -154,7 +182,7 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
                       </span>
                     ))}
                   </div>
-                  
+
                   <button className="btn-primary w-full mt-6 group-hover:shadow-hottie-500/50">
                     Chat with {persona.name}
                   </button>
