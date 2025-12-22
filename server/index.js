@@ -25,6 +25,9 @@ if (missingEnvVars.length > 0) {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Railway/Heroku (needed for rate limiting behind reverse proxy)
+app.set('trust proxy', 1);
+
 // OpenRouter configuration
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -757,7 +760,7 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
 
     // Log to training_data for learning (track conversation depth + premium status)
     const conversationDepth = conversationHistory.length;
-    const isFullSend = isPremium && personality?.savagery >= 75 && personality?.crassness >= 75;
+    const isFullSend = req.isPremium && personality?.savagery >= 75 && personality?.crassness >= 75;
     supabase.from('training_data').insert({
       user_id: req.body.userId || null,
       persona: persona,

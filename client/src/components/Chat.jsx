@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Send, ArrowLeft, AlertCircle, User, Flame } from 'lucide-react'
+import { Send, ArrowLeft, AlertCircle, Flame } from 'lucide-react'
 import PersonalitySettings from './PersonalitySettings'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
@@ -338,15 +338,9 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
             onToggle={() => setShowSettings(!showSettings)}
             isPremium={isPremium}
             onUpgrade={handleUpgrade}
+            partnerPrefs={partnerPrefs}
+            onPartnerPrefsChange={onPartnerPrefsChange}
           />
-          
-          <button
-            onClick={onShowPartnerSetup}
-            className="p-2 text-dark-400 hover:text-white hover:bg-dark-800 rounded-lg transition-all"
-            title="Partner Settings"
-          >
-            <User className="w-5 h-5" />
-          </button>
         </div>
       </header>
 

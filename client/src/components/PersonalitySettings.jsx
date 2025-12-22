@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Settings, X, Flame, Heart, MessageSquare, Crown, Lock, Zap } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Settings, X, Flame, Heart, MessageSquare, Crown, Lock, Zap, User } from 'lucide-react'
+import { savePartnerPrefs } from './PartnerSetup'
 
 const FULL_SEND_SETTINGS = {
   savagery: 100,
@@ -15,7 +16,7 @@ const SLIDER_CONFIG = [
     icon: Flame,
     min: 'Gentle Nudge',
     max: 'No Mercy',
-    description: 'How hard do you want to be called out?'
+    description: 'How hard should they roast you?'
   },
   {
     id: 'honesty',
@@ -44,8 +45,41 @@ const SLIDER_CONFIG = [
   }
 ]
 
-export default function PersonalitySettings({ settings, onSettingsChange, isOpen, onToggle, isPremium = false, onUpgrade }) {
+const PARTNER_GENDERS = [
+  { id: 'wife', label: 'Wife', description: 'She/Her' },
+  { id: 'husband', label: 'Husband', description: 'He/Him' },
+  { id: 'partner', label: 'Partner', description: 'Neutral' }
+]
+
+const USER_GENDERS = [
+  { id: 'male', label: 'Male' },
+  { id: 'female', label: 'Female' },
+  { id: 'other', label: 'Other' }
+]
+
+export default function PersonalitySettings({
+  settings,
+  onSettingsChange,
+  isOpen,
+  onToggle,
+  isPremium = false,
+  onUpgrade,
+  partnerPrefs,
+  onPartnerPrefsChange
+}) {
   const [showPaywall, setShowPaywall] = useState(false)
+  const [partnerGender, setPartnerGender] = useState(partnerPrefs?.partnerGender || 'partner')
+  const [userGender, setUserGender] = useState(partnerPrefs?.userGender || 'other')
+  const [partnerName, setPartnerName] = useState(partnerPrefs?.partnerName || '')
+
+  // Sync with incoming props
+  useEffect(() => {
+    if (partnerPrefs) {
+      setPartnerGender(partnerPrefs.partnerGender || 'partner')
+      setUserGender(partnerPrefs.userGender || 'other')
+      setPartnerName(partnerPrefs.partnerName || '')
+    }
+  }, [partnerPrefs])
 
   const isFullSend = settings.savagery === 100 &&
                      settings.honesty === 100 &&
@@ -59,18 +93,16 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
     }
 
     if (isFullSend) {
-      // Turn off full send - go back to defaults
       onSettingsChange({ savagery: 50, honesty: 50, crassness: 50, class: 50 })
     } else {
-      // Turn on full send
       onSettingsChange(FULL_SEND_SETTINGS)
     }
   }
 
-  const handleUpgradeClick = () => {
+  const handleUpgradeClick = (plan = 'annual') => {
     setShowPaywall(false)
     if (onUpgrade) {
-      onUpgrade()
+      onUpgrade(plan)
     }
   }
 
@@ -81,15 +113,29 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
     })
   }
 
+  const handleSave = () => {
+    // Save partner prefs
+    const prefs = {
+      partnerGender,
+      userGender,
+      partnerName: partnerName.trim() || null
+    }
+    savePartnerPrefs(prefs)
+    if (onPartnerPrefsChange) {
+      onPartnerPrefsChange(prefs)
+    }
+    onToggle()
+  }
+
   if (!isOpen) {
     return (
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 text-dark-400 hover:text-white text-sm 
+        className="flex items-center gap-2 text-dark-400 hover:text-white text-sm
           bg-dark-800 hover:bg-dark-700 px-3 py-2 rounded-lg transition-all"
       >
         <Settings className="w-4 h-4" />
-        <span className="hidden sm:inline">Personality</span>
+        <span className="hidden sm:inline">Settings</span>
       </button>
     )
   }
@@ -106,155 +152,235 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
             <X className="w-5 h-5 text-dark-400" />
           </button>
 
-          <h2 className="font-display text-xl font-bold mb-1 pr-8">Customise Your Other Half</h2>
-          <p className="text-dark-400 text-sm">
-            Dial in exactly how much relationship realness you can handle.
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-hottie-500/20 rounded-full flex items-center justify-center">
+              <Heart className="w-5 h-5 text-hottie-400" />
+            </div>
+            <div>
+              <h2 className="font-display text-xl font-bold">Customise Your Other Half</h2>
+              <p className="text-dark-400 text-sm">Make it feel like home</p>
+            </div>
+          </div>
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-4">
 
-        {/* Full Send Mode Toggle */}
-        <div
-          onClick={handleFullSendToggle}
-          className={`mb-6 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-            isFullSend && isPremium
-              ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/50'
-              : 'bg-dark-800 border-dark-700 hover:border-dark-600'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${isFullSend && isPremium ? 'bg-red-500/30' : 'bg-dark-700'}`}>
-                <Zap className={`w-5 h-5 ${isFullSend && isPremium ? 'text-red-400' : 'text-dark-400'}`} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold">Full Send Mode</span>
-                  {!isPremium && <Lock className="w-4 h-4 text-amber-400" />}
-                </div>
-                <p className="text-dark-400 text-xs">Maximum chaos. No filter. Full bogan.</p>
-              </div>
-            </div>
-            <div className={`w-12 h-7 rounded-full p-1 transition-colors ${
-              isFullSend && isPremium ? 'bg-red-500' : 'bg-dark-600'
-            }`}>
-              <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                isFullSend && isPremium ? 'translate-x-5' : 'translate-x-0'
-              }`} />
+          {/* Partner Gender Selection */}
+          <div className="mb-5">
+            <label className="block text-sm font-medium mb-2">
+              Your "other half" speaks as a...
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {PARTNER_GENDERS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setPartnerGender(option.id)}
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
+                    partnerGender === option.id
+                      ? 'border-hottie-500 bg-hottie-500/10 text-white'
+                      : 'border-dark-700 bg-dark-800 text-dark-300 hover:border-dark-600'
+                  }`}
+                >
+                  <div className="font-medium text-sm">{option.label}</div>
+                  <div className="text-xs text-dark-500">{option.description}</div>
+                </button>
+              ))}
             </div>
           </div>
-        </div>
 
-        <div className="space-y-6">
-          {SLIDER_CONFIG.map((slider) => {
-            const Icon = slider.icon
-            const value = settings[slider.id] || 50
-            const showPremiumLock = slider.id === 'crassness' && value > 70 && !isPremium
-            
-            return (
-              <div key={slider.id}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Icon className="w-4 h-4 text-hottie-400" />
-                  <span className="font-medium text-sm">{slider.label}</span>
-                  {showPremiumLock && (
-                    <span className="flex items-center gap-1 text-xs text-amber-400 ml-auto">
-                      <Lock className="w-3 h-3" />
-                      Premium for max
-                    </span>
-                  )}
-                </div>
-                
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={value}
-                  onChange={(e) => handleSliderChange(slider.id, e.target.value)}
-                  className="w-full accent-hottie-500"
-                />
-                
-                <div className="flex justify-between text-xs text-dark-500 mt-1">
-                  <span>{slider.min}</span>
-                  <span className="text-dark-600">{slider.description}</span>
-                  <span>{slider.max}</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Presets */}
-        <div className="mt-8 pt-6 border-t border-dark-800">
-          <p className="text-sm text-dark-400 mb-3">Quick Presets:</p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => onSettingsChange({ savagery: 20, honesty: 30, crassness: 20, class: 80 })}
-              className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
-            >
-              🍷 Gentle Hint
-            </button>
-            <button
-              onClick={() => onSettingsChange({ savagery: 50, honesty: 50, crassness: 50, class: 50 })}
-              className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
-            >
-              ⚖️ Balanced
-            </button>
-            <button
-              onClick={() => onSettingsChange({ savagery: 80, honesty: 90, crassness: 50, class: 30 })}
-              className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
-            >
-              🔥 Real Talk
-            </button>
-            <button
-              onClick={() => onSettingsChange({ savagery: 90, honesty: 100, crassness: 70, class: 10 })}
-              className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
-            >
-              🇦🇺 Aussie Mate
-            </button>
-            <button
-              onClick={() => onSettingsChange({ savagery: 100, honesty: 100, crassness: 100, class: 0 })}
-              className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
-            >
-              💀 Full Send
-              {!isPremium && <Lock className="w-3 h-3 text-amber-400" />}
-            </button>
-          </div>
-        </div>
-
-        {!isPremium && (
-          <div className="mt-6 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl">
-            <div className="flex items-center gap-2 mb-2">
-              <Lock className="w-4 h-4 text-amber-400" />
-              <span className="font-medium text-sm">Unlock Full Bogan Mode</span>
+          {/* User Gender */}
+          <div className="mb-5">
+            <label className="block text-sm font-medium mb-2">
+              You are...
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {USER_GENDERS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setUserGender(option.id)}
+                  className={`p-2.5 rounded-xl border text-center transition-all ${
+                    userGender === option.id
+                      ? 'border-hottie-500 bg-hottie-500/10 text-white'
+                      : 'border-dark-700 bg-dark-800 text-dark-300 hover:border-dark-600'
+                  }`}
+                >
+                  <div className="font-medium text-sm">{option.label}</div>
+                </button>
+              ))}
             </div>
-            <p className="text-dark-400 text-xs mb-3">
-              Premium unlocks maximum crassness — full f-bombs, c-bombs, and absolutely no filter.
+          </div>
+
+          {/* Partner Name */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2">
+              Give them a name <span className="text-dark-500">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={partnerName}
+              onChange={(e) => setPartnerName(e.target.value)}
+              placeholder="e.g., Babe, Hun, Love..."
+              className="input-field w-full"
+              maxLength={20}
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-dark-800 my-6 pt-6">
+            <p className="text-sm font-medium mb-4 flex items-center gap-2">
+              <Flame className="w-4 h-4 text-hottie-400" />
+              Personality Settings
             </p>
-            <div className="flex items-center gap-3">
+          </div>
+
+          {/* Full Send Mode Toggle */}
+          <div
+            onClick={handleFullSendToggle}
+            className={`mb-6 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              isFullSend && isPremium
+                ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-500/50'
+                : 'bg-dark-800 border-dark-700 hover:border-dark-600'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${isFullSend && isPremium ? 'bg-red-500/30' : 'bg-dark-700'}`}>
+                  <Zap className={`w-5 h-5 ${isFullSend && isPremium ? 'text-red-400' : 'text-dark-400'}`} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold">Full Send Mode</span>
+                    {!isPremium && <Lock className="w-4 h-4 text-amber-400" />}
+                  </div>
+                  <p className="text-dark-400 text-xs">Maximum chaos. No filter. Full bogan.</p>
+                </div>
+              </div>
+              <div className={`w-12 h-7 rounded-full p-1 transition-colors ${
+                isFullSend && isPremium ? 'bg-red-500' : 'bg-dark-600'
+              }`}>
+                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  isFullSend && isPremium ? 'translate-x-5' : 'translate-x-0'
+                }`} />
+              </div>
+            </div>
+          </div>
+
+          {/* Sliders */}
+          <div className="space-y-5">
+            {SLIDER_CONFIG.map((slider) => {
+              const Icon = slider.icon
+              const value = settings[slider.id] || 50
+              const showPremiumLock = slider.id === 'crassness' && value > 70 && !isPremium
+
+              return (
+                <div key={slider.id}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className="w-4 h-4 text-hottie-400" />
+                    <span className="font-medium text-sm">{slider.label}</span>
+                    {showPremiumLock && (
+                      <span className="flex items-center gap-1 text-xs text-amber-400 ml-auto">
+                        <Lock className="w-3 h-3" />
+                        Premium
+                      </span>
+                    )}
+                  </div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={value}
+                    onChange={(e) => handleSliderChange(slider.id, e.target.value)}
+                    className="w-full accent-hottie-500"
+                  />
+
+                  <div className="flex justify-between text-xs text-dark-500 mt-1">
+                    <span>{slider.min}</span>
+                    <span>{slider.max}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Quick Presets */}
+          <div className="mt-6 pt-4 border-t border-dark-800">
+            <p className="text-sm text-dark-400 mb-3">Quick Presets:</p>
+            <div className="flex flex-wrap gap-2">
               <button
-                onClick={handleUpgradeClick}
-                className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+                onClick={() => onSettingsChange({ savagery: 20, honesty: 30, crassness: 20, class: 80 })}
+                className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
               >
-                $6.99/month
+                🍷 Gentle
               </button>
-              <span className="text-dark-600 text-xs">or</span>
               <button
-                onClick={handleUpgradeClick}
-                className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+                onClick={() => onSettingsChange({ savagery: 50, honesty: 50, crassness: 50, class: 50 })}
+                className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
               >
-                $49.99/year (save 40%)
+                ⚖️ Balanced
+              </button>
+              <button
+                onClick={() => onSettingsChange({ savagery: 80, honesty: 90, crassness: 50, class: 30 })}
+                className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
+              >
+                🔥 Spicy
+              </button>
+              <button
+                onClick={() => onSettingsChange({ savagery: 90, honesty: 100, crassness: 70, class: 10 })}
+                className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors"
+              >
+                🇦🇺 Aussie
+              </button>
+              <button
+                onClick={() => {
+                  if (!isPremium) {
+                    setShowPaywall(true)
+                  } else {
+                    onSettingsChange(FULL_SEND_SETTINGS)
+                  }
+                }}
+                className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
+              >
+                💀 Full Send
+                {!isPremium && <Lock className="w-3 h-3 text-amber-400" />}
               </button>
             </div>
           </div>
-        )}
+
+          {/* Premium Upsell */}
+          {!isPremium && (
+            <div className="mt-6 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Lock className="w-4 h-4 text-amber-400" />
+                <span className="font-medium text-sm">Unlock Full Bogan Mode</span>
+              </div>
+              <p className="text-dark-400 text-xs mb-3">
+                Premium unlocks maximum crassness — full f-bombs, c-bombs, and no filter.
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleUpgradeClick('monthly')}
+                  className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+                >
+                  $6.99/mo
+                </button>
+                <span className="text-dark-600 text-xs">or</span>
+                <button
+                  onClick={() => handleUpgradeClick('annual')}
+                  className="text-amber-400 text-sm font-medium hover:underline cursor-pointer"
+                >
+                  $49.99/yr (save 40%)
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer with Save Button */}
         <div className="flex-shrink-0 p-4 pt-3 border-t border-dark-800">
           <button
-            onClick={onToggle}
+            onClick={handleSave}
             className="btn-primary w-full"
           >
             Save & Close
@@ -281,7 +407,7 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
                 Maximum chaos. No filter. Full bogan.
               </p>
 
-              {/* Annual Option - Best Value */}
+              {/* Annual Option */}
               <div className="bg-dark-800 rounded-xl p-4 mb-3 border-2 border-green-500 relative">
                 <span className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">
                   BEST VALUE
@@ -292,7 +418,7 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
                 </div>
                 <p className="text-green-400 text-xs mb-3">Save 40% ($4.17/mo)</p>
                 <button
-                  onClick={handleUpgradeClick}
+                  onClick={() => handleUpgradeClick('annual')}
                   className="btn-primary w-full text-sm"
                 >
                   Get Annual Access
@@ -308,7 +434,7 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
                     <p className="text-dark-500 text-xs">Cancel anytime</p>
                   </div>
                   <button
-                    onClick={handleUpgradeClick}
+                    onClick={() => handleUpgradeClick('monthly')}
                     className="btn-secondary text-sm px-4"
                   >
                     Go Monthly
@@ -316,29 +442,25 @@ export default function PersonalitySettings({ settings, onSettingsChange, isOpen
                 </div>
               </div>
 
-              {/* Features List */}
+              {/* Features */}
               <div className="text-left mb-4">
                 <p className="text-xs text-dark-500 uppercase tracking-wider mb-2">What you get:</p>
-                <ul className="text-sm text-dark-300 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
-                    <span><strong>Unlimited messages</strong> — no daily caps</span>
+                <ul className="text-sm text-dark-300 space-y-1.5">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Unlimited messages</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
-                    <span><strong>Full Send Mode</strong> — maximum savagery unlocked</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>Full Send Mode unlocked</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
-                    <span><strong>No filter language</strong> — f-bombs, c-bombs, the lot</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>No filter language (f-bombs, c-bombs)</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
-                    <span><strong>All personality sliders</strong> — full customisation</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
-                    <span><strong>Brutal honesty mode</strong> — no sugarcoating</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-400">✓</span>
+                    <span>All personality settings</span>
                   </li>
                 </ul>
               </div>
