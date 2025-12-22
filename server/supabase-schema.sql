@@ -1,6 +1,88 @@
 -- Toxic Hottie Database Schema
 -- Run this in your Supabase SQL Editor
 
+-- ============================================
+-- PROFILES TABLE - Main user data
+-- ============================================
+-- This table stores user profile info and auto-creates when users sign up
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email TEXT,
+  display_name TEXT,
+  avatar_url TEXT,
+  partner_gender TEXT DEFAULT 'partner', -- wife, husband, partner
+  user_gender TEXT DEFAULT 'other', -- male, female, other
+  partner_name TEXT, -- custom name for their AI partner
+  is_premium BOOLEAN DEFAULT FALSE,
+  premium_plan TEXT, -- 'monthly' or 'annual'
+  premium_started_at TIMESTAMPTZ,
+  premium_expires_at TIMESTAMPTZ,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  total_messages INTEGER DEFAULT 0,
+  signup_source TEXT, -- where they came from (organic, referral, ad)
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create index for quick email lookups
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+CREATE INDEX IF NOT EXISTS idx_profiles_premium ON profiles(is_premium);
+
+-- Enable RLS
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Policies
+CREATE POLICY "Users can view own profile" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Service role can manage all profiles" ON profiles
+  FOR ALL USING (auth.role() = 'service_role');
+
+-- AUTO-CREATE PROFILE ON SIGNUP
+-- This function runs automatically when a new user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, created_at)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    NOW()
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Drop trigger if exists (for re-running)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+-- Create trigger to auto-create profile
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Trigger for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;
+CREATE TRIGGER update_profiles_updated_at
+  BEFORE UPDATE ON profiles
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- USER USAGE TABLE - Daily message tracking
+-- ============================================
 -- User usage tracking for authenticated users
 CREATE TABLE IF NOT EXISTS user_usage (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
