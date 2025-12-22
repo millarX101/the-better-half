@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { Sparkles, Settings } from 'lucide-react'
 
@@ -226,6 +226,13 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
       <footer className="py-8 px-4 border-t border-dark-800 text-center text-dark-500 text-sm">
         <p>Made for everyone who's ever heard "I told you so"</p>
         <p className="mt-2">The personas are fictional. The relationship dynamics are painfully real.</p>
+        <div className="mt-4 flex justify-center gap-4">
+          <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+          <span>•</span>
+          <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+          <span>•</span>
+          <Link to="/refund" className="hover:text-white transition-colors">Refund Policy</Link>
+        </div>
       </footer>
     </div>
   )
