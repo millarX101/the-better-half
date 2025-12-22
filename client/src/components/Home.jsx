@@ -85,7 +85,7 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-hottie-500/10 text-hottie-400 px-4 py-2 rounded-full text-sm mb-6">
             <Sparkles className="w-4 h-4" />
-            <span>AI-Powered Relationship Realness</span>
+            <span>Find out what they REALLY think before you step in it</span>
           </div>
           
           <h1 className="font-display text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -196,7 +196,7 @@ export default function Home({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
 
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-dark-800 text-center text-dark-500 text-sm">
-        <p>Made for everyone who's ever heard "I told you so" • Powered by Claude AI</p>
+        <p>Made for everyone who's ever heard "I told you so"</p>
         <p className="mt-2">The personas are fictional. The relationship dynamics are painfully real.</p>
       </footer>
     </div>
