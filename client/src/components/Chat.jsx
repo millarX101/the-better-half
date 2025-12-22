@@ -89,6 +89,9 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   const [isPremium, setIsPremium] = useState(false)
   const [isUpgrading, setIsUpgrading] = useState(false)
   const [streak, setStreak] = useState(null)
+  const [showComingSoon, setShowComingSoon] = useState(false)
+  const [waitlistEmail, setWaitlistEmail] = useState('')
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -143,6 +146,12 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
   }, [isAuthenticated, user?.id])
 
   const handleUpgrade = async () => {
+    // TEMP: Show coming soon modal while payments are being set up
+    setShowComingSoon(true)
+    return
+
+    // Original payment code - uncomment when Stripe is ready:
+    /*
     if (!user?.id || !user?.email) {
       onShowAuth()
       return
@@ -171,6 +180,25 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
       setError('Failed to connect to payment system')
     } finally {
       setIsUpgrading(false)
+    }
+    */
+  }
+
+  const handleWaitlistSubmit = async (e) => {
+    e.preventDefault()
+    if (!waitlistEmail) return
+
+    try {
+      await fetch(`${API_URL}/api/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: waitlistEmail })
+      })
+      setWaitlistSubmitted(true)
+    } catch (err) {
+      console.error('Waitlist error:', err)
+      // Still show success - we don't want to block the UX
+      setWaitlistSubmitted(true)
     }
   }
 
@@ -396,6 +424,65 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs }) {
           )}
         </form>
       </div>
+
+      {/* Coming Soon Modal */}
+      {showComingSoon && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="card max-w-sm w-full p-6 text-center relative">
+            <button
+              onClick={() => setShowComingSoon(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors text-dark-400 hover:text-white"
+            >
+              ✕
+            </button>
+
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-3xl">
+              🚀
+            </div>
+
+            <h3 className="font-display text-2xl font-bold mb-2">Premium Coming Soon!</h3>
+
+            {!waitlistSubmitted ? (
+              <>
+                <p className="text-dark-400 text-sm mb-6">
+                  We're setting up payments now. Drop your email and we'll let you know the second Full Send Mode goes live.
+                </p>
+
+                <form onSubmit={handleWaitlistSubmit} className="space-y-3">
+                  <input
+                    type="email"
+                    value={waitlistEmail}
+                    onChange={(e) => setWaitlistEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="input-field w-full text-center"
+                    required
+                  />
+                  <button type="submit" className="btn-primary w-full">
+                    Notify Me
+                  </button>
+                </form>
+
+                <p className="text-dark-600 text-xs mt-4">
+                  No spam, just one email when we launch.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-4xl mb-4">🎉</div>
+                <p className="text-dark-300 text-sm mb-6">
+                  You're on the list! We'll email you the moment Premium drops.
+                </p>
+                <button
+                  onClick={() => setShowComingSoon(false)}
+                  className="btn-primary w-full"
+                >
+                  Back to Roasting
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

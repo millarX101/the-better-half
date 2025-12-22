@@ -967,6 +967,35 @@ app.post('/api/webhook', async (req, res) => {
   res.json({ received: true });
 });
 
+// ============================================
+// WAITLIST ENDPOINT (for email capture)
+// ============================================
+app.post('/api/waitlist', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email required' });
+    }
+
+    // Save to Supabase waitlist table
+    const { error } = await supabase
+      .from('waitlist')
+      .upsert({ email, created_at: new Date().toISOString() }, { onConflict: 'email' });
+
+    if (error) {
+      console.error('Waitlist save error:', error);
+      // Don't expose error to user, just log it
+    }
+
+    console.log(`Waitlist signup: ${email}`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Waitlist error:', err);
+    res.json({ success: true }); // Don't block UX on errors
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   if (stripe) {
