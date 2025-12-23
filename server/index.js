@@ -13,8 +13,14 @@ const stripe = process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !=
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
-// Validate required environment variables
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_KEY'];
+// Validate required environment variables - support both Anthropic and OpenRouter
+const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
+const hasOpenRouter = !!process.env.OPENROUTER_API_KEY;
+if (!hasAnthropic && !hasOpenRouter) {
+  console.error('Missing API key: Set either ANTHROPIC_API_KEY or OPENROUTER_API_KEY');
+  process.exit(1);
+}
+const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_SERVICE_KEY'];
 const missingEnvVars = requiredEnvVars.filter(v => !process.env[v]);
 if (missingEnvVars.length > 0) {
   console.error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
@@ -28,11 +34,18 @@ const PORT = process.env.PORT || 3001;
 // Trust proxy for Railway/Heroku (needed for rate limiting behind reverse proxy)
 app.set('trust proxy', 1);
 
-// OpenRouter configuration
+// AI Configuration - prefer Anthropic Claude, fallback to OpenRouter
+const USE_ANTHROPIC = !!process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+const CLAUDE_MODEL = 'claude-3-5-haiku-20241022'; // Fast, cheap, follows instructions well
+
+// OpenRouter fallback
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Llama 3.1 70B - reliable, smart, good at following instructions
-const AI_MODEL = 'meta-llama/llama-3.1-70b-instruct';
+const OPENROUTER_MODEL = 'meta-llama/llama-3.1-70b-instruct';
+
+console.log(`Using AI provider: ${USE_ANTHROPIC ? 'Anthropic Claude' : 'OpenRouter Llama'}`);
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -1044,39 +1057,77 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
 
 [REMINDER: Keep response to 1-3 sentences MAX. No essays. No **bold**. Never say "champ" or "mate". Be brutal but brief.]`;
 
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-10).map(msg => ({
-        role: msg.role,
-        content: msg.content
-      })),
-      { role: 'user', content: userMessageWithReminder }
-    ];
+    let reply;
 
-    const response = await fetch(OPENROUTER_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.CLIENT_URL || 'http://localhost:5173',
-        'X-Title': 'The Better Half'
-      },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages: messages,
-        max_tokens: 150,
-        temperature: 0.85
-      })
-    });
+    if (USE_ANTHROPIC) {
+      // Anthropic Claude API
+      const claudeMessages = [
+        ...conversationHistory.slice(-10).map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        { role: 'user', content: userMessageWithReminder }
+      ];
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('OpenRouter error:', errorData);
-      throw new Error(errorData.error?.message || 'OpenRouter API error');
+      const response = await fetch(ANTHROPIC_URL, {
+        method: 'POST',
+        headers: {
+          'x-api-key': ANTHROPIC_API_KEY,
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: CLAUDE_MODEL,
+          max_tokens: 200,
+          system: systemPrompt,
+          messages: claudeMessages
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Anthropic error:', errorData);
+        throw new Error(errorData.error?.message || 'Anthropic API error');
+      }
+
+      const data = await response.json();
+      reply = data.content[0].text;
+    } else {
+      // OpenRouter fallback
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...conversationHistory.slice(-10).map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        { role: 'user', content: userMessageWithReminder }
+      ];
+
+      const response = await fetch(OPENROUTER_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': process.env.CLIENT_URL || 'http://localhost:5173',
+          'X-Title': 'The Better Half'
+        },
+        body: JSON.stringify({
+          model: OPENROUTER_MODEL,
+          messages: messages,
+          max_tokens: 150,
+          temperature: 0.85
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('OpenRouter error:', errorData);
+        throw new Error(errorData.error?.message || 'OpenRouter API error');
+      }
+
+      const data = await response.json();
+      reply = data.choices[0].message.content;
     }
-
-    const data = await response.json();
-    const reply = data.choices[0].message.content;
 
     // Log to training_data for learning (track conversation depth + premium status)
     const conversationDepth = conversationHistory.length;
