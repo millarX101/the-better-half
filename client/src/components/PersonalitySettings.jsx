@@ -141,8 +141,8 @@ export default function PersonalitySettings({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="bg-dark-900 border border-dark-700 rounded-2xl max-w-md w-full relative max-h-[90vh] shadow-2xl flex flex-col">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto">
+      <div className="bg-dark-900 border border-dark-700 rounded-2xl max-w-md w-full relative max-h-[calc(100vh-4rem)] shadow-2xl flex flex-col my-auto">
         {/* Header */}
         <div className="flex-shrink-0 p-4 pb-3 border-b border-dark-800">
           <button
