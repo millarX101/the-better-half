@@ -31,8 +31,8 @@ app.set('trust proxy', 1);
 // OpenRouter configuration
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Llama 3.1 70B - fast, smart, witty, less restricted, great for Aussie banter
-const AI_MODEL = 'meta-llama/llama-3.1-70b-instruct';
+// Hermes 3 405B - uncensored, follows instructions without moralizing, great for savage comedy
+const AI_MODEL = 'nousresearch/hermes-3-llama-3.1-405b';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
