@@ -31,8 +31,8 @@ app.set('trust proxy', 1);
 // OpenRouter configuration
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Dolphin Mixtral - explicitly uncensored, no safety filters, follows all instructions
-const AI_MODEL = 'cognitivecomputations/dolphin-mixtral-8x22b';
+// Venice Uncensored - 2.2% censorship rate (vs 71% Claude), no safety filters
+const AI_MODEL = 'cognitivecomputations/dolphin-mistral-24b-venice-edition';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
