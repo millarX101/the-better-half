@@ -31,8 +31,8 @@ app.set('trust proxy', 1);
 // OpenRouter configuration
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Venice Uncensored - 2.2% censorship rate, no safety filters
-const AI_MODEL = 'cognitivecomputations/dolphin-mistral-24b-venice-edition';
+// Lumimaid 70B - roleplay focused, uncensored, from NeverSleep team
+const AI_MODEL = 'neversleep/llama-3-lumimaid-70b';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
