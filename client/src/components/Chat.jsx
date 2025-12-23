@@ -331,10 +331,11 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
             </div>
           )}
           
+          {/* Settings button only - modal renders outside header */}
           <PersonalitySettings
             settings={personality}
             onSettingsChange={setPersonality}
-            isOpen={showSettings}
+            isOpen={false}
             onToggle={() => setShowSettings(!showSettings)}
             isPremium={isPremium}
             onUpgrade={handleUpgrade}
@@ -343,6 +344,20 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
           />
         </div>
       </header>
+
+      {/* Settings Modal - rendered outside header for proper z-index */}
+      {showSettings && (
+        <PersonalitySettings
+          settings={personality}
+          onSettingsChange={setPersonality}
+          isOpen={true}
+          onToggle={() => setShowSettings(false)}
+          isPremium={isPremium}
+          onUpgrade={handleUpgrade}
+          partnerPrefs={partnerPrefs}
+          onPartnerPrefsChange={onPartnerPrefsChange}
+        />
+      )}
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
