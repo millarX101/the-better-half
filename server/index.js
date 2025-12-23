@@ -47,6 +47,11 @@ const OPENROUTER_MODEL = 'meta-llama/llama-3.1-70b-instruct';
 
 console.log(`Using AI provider: ${USE_ANTHROPIC ? 'Anthropic Claude' : 'OpenRouter Llama'}`);
 
+// CLIENT_URL with production fallback
+const CLIENT_URL = process.env.CLIENT_URL || 'https://thebetterhalf.com.au';
+console.log(`CLIENT_URL: "${CLIENT_URL}" (from env: ${!!process.env.CLIENT_URL})`);
+console.log(`PORT: ${process.env.PORT || 3001}`);
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
@@ -62,8 +67,9 @@ const allowedOrigins = [
   'https://thebetterhalf.netlify.app',
   'http://localhost:5173'
 ];
-if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL);
+// CLIENT_URL already in hardcoded list, but add if different
+if (CLIENT_URL && !allowedOrigins.includes(CLIENT_URL)) {
+  allowedOrigins.push(CLIENT_URL);
 }
 
 app.use(cors({
@@ -1127,7 +1133,7 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': process.env.CLIENT_URL || 'http://localhost:5173',
+          'HTTP-Referer': CLIENT_URL,
           'X-Title': 'The Better Half'
         },
         body: JSON.stringify({
@@ -1387,8 +1393,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
           quantity: 1
         }
       ],
-      success_url: `${process.env.CLIENT_URL}/?payment=success`,
-      cancel_url: `${process.env.CLIENT_URL}/?payment=cancelled`,
+      success_url: `${CLIENT_URL}/?payment=success`,
+      cancel_url: `${CLIENT_URL}/?payment=cancelled`,
       metadata: {
         userId: userId,
         plan: plan
