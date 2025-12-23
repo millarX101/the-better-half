@@ -1032,13 +1032,18 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
     const systemPrompt = buildSystemPrompt(persona, personality, req.isPremium || false, partnerPrefs, fewShotExamples);
     
     // Build messages array with history (OpenRouter uses OpenAI format)
+    // Add reminder to keep responses short and follow rules
+    const userMessageWithReminder = `${message}
+
+[REMINDER: Keep response to 1-3 sentences MAX. No essays. No **bold**. Never say "champ" or "mate". Be brutal but brief.]`;
+
     const messages = [
       { role: 'system', content: systemPrompt },
       ...conversationHistory.slice(-10).map(msg => ({
         role: msg.role,
         content: msg.content
       })),
-      { role: 'user', content: message }
+      { role: 'user', content: userMessageWithReminder }
     ];
 
     const response = await fetch(OPENROUTER_URL, {
@@ -1052,8 +1057,8 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
       body: JSON.stringify({
         model: AI_MODEL,
         messages: messages,
-        max_tokens: 500,
-        temperature: 0.9
+        max_tokens: 150,
+        temperature: 0.85
       })
     });
 
