@@ -414,8 +414,8 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-dark-800 bg-dark-950/95 backdrop-blur-sm p-4">
+      {/* Input Area - extra padding on mobile to avoid iOS home bar/search */}
+      <div className="border-t border-dark-800 bg-dark-950/95 backdrop-blur-sm p-4" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}>
         <form onSubmit={sendMessage} className="max-w-2xl mx-auto">
           <div className="flex gap-3">
             <input
