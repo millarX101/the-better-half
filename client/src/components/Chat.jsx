@@ -464,7 +464,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
             </div>
 
             <h3 className="font-display text-2xl font-bold mb-2">
-              {trialUsed ? 'Upgrade to Premium' : 'Try Full Send Mode FREE!'}
+              {trialUsed ? 'Upgrade to Premium' : 'Try Unhinged Mode FREE!'}
             </h3>
 
             {!isAuthenticated ? (
@@ -527,7 +527,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
 
                 <ul className="text-xs text-dark-400 space-y-1 text-left mb-4">
                   <li>✓ Unlimited messages</li>
-                  <li>✓ Full Send Mode unlocked</li>
+                  <li>✓ Unhinged Mode unlocked</li>
                   <li>✓ Maximum savagery enabled</li>
                   <li>✓ No daily limits</li>
                 </ul>
@@ -543,7 +543,7 @@ export default function Chat({ onShowAuth, onShowPartnerSetup, partnerPrefs, onP
                   <p className="text-lg font-bold text-green-400 mb-2">FREE for 7 days</p>
                   <ul className="text-sm text-dark-300 space-y-1 text-left">
                     <li>✓ Unlimited messages</li>
-                    <li>✓ Full Send Mode unlocked</li>
+                    <li>✓ Unhinged Mode unlocked</li>
                     <li>✓ Maximum crassness enabled</li>
                     <li>✓ Absolutely no filter</li>
                   </ul>

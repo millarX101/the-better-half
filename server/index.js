@@ -768,7 +768,7 @@ app.post('/api/chat', checkUsageLimit, async (req, res) => {
       user_message: message,
       ai_response: reply,
       conversation_depth: conversationDepth, // Higher = more engaged user
-      is_premium: isFullSend // Track Full Send mode for learning the good savage stuff
+      is_premium: isFullSend // Track Unhinged mode for learning the good savage stuff
     }).then(() => {}).catch(err => console.error('Training data log error:', err));
 
     // Update user stats (async, don't block response)

@@ -234,7 +234,7 @@ export default function PersonalitySettings({
             </p>
           </div>
 
-          {/* Full Send Mode Toggle */}
+          {/* Unhinged Mode Toggle */}
           <div
             onClick={handleFullSendToggle}
             className={`mb-6 p-4 rounded-xl border-2 cursor-pointer transition-all ${
@@ -250,7 +250,7 @@ export default function PersonalitySettings({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold">Full Send Mode</span>
+                    <span className="font-bold">Unhinged Mode</span>
                     {!isPremium && <Lock className="w-4 h-4 text-amber-400" />}
                   </div>
                   <p className="text-dark-400 text-xs">Maximum chaos. No filter. Full bogan.</p>
@@ -342,7 +342,7 @@ export default function PersonalitySettings({
                 }}
                 className="text-xs bg-dark-800 hover:bg-dark-700 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
               >
-                💀 Full Send
+                💀 Unhinged
                 {!isPremium && <Lock className="w-3 h-3 text-amber-400" />}
               </button>
             </div>
@@ -387,94 +387,95 @@ export default function PersonalitySettings({
           </button>
         </div>
 
-        {/* Paywall Popup */}
-        {showPaywall && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] flex items-center justify-center p-4 overflow-y-auto">
-            <div className="card max-w-sm w-full max-h-[85vh] overflow-y-auto p-6 text-center relative my-4">
+      </div>
+
+      {/* Paywall Popup - Outside modal container for proper z-index */}
+      {showPaywall && (
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-dark-900 border border-dark-700 rounded-2xl max-w-sm w-full max-h-[85vh] overflow-y-auto p-6 text-center relative my-4 shadow-2xl">
+            <button
+              onClick={() => setShowPaywall(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors z-10"
+            >
+              <X className="w-5 h-5 text-dark-400" />
+            </button>
+
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+              <Zap className="w-8 h-8 text-white" />
+            </div>
+
+            <h3 className="font-display text-2xl font-bold mb-2">Unlock Unhinged Mode</h3>
+            <p className="text-dark-400 text-sm mb-4">
+              Maximum chaos. No filter. Full bogan.
+            </p>
+
+            {/* Annual Option */}
+            <div className="bg-dark-800 rounded-xl p-4 mb-3 border-2 border-green-500 relative">
+              <span className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">
+                BEST VALUE
+              </span>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <span className="text-2xl font-bold">$49.99</span>
+                <span className="text-dark-400">/year</span>
+              </div>
+              <p className="text-green-400 text-xs mb-3">Save 40% ($4.17/mo)</p>
               <button
-                onClick={() => setShowPaywall(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-dark-800 rounded-lg transition-colors z-10"
+                onClick={() => handleUpgradeClick('annual')}
+                className="btn-primary w-full text-sm"
               >
-                <X className="w-5 h-5 text-dark-400" />
-              </button>
-
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                <Zap className="w-8 h-8 text-white" />
-              </div>
-
-              <h3 className="font-display text-2xl font-bold mb-2">Unlock Full Send Mode</h3>
-              <p className="text-dark-400 text-sm mb-4">
-                Maximum chaos. No filter. Full bogan.
-              </p>
-
-              {/* Annual Option */}
-              <div className="bg-dark-800 rounded-xl p-4 mb-3 border-2 border-green-500 relative">
-                <span className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">
-                  BEST VALUE
-                </span>
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl font-bold">$49.99</span>
-                  <span className="text-dark-400">/year</span>
-                </div>
-                <p className="text-green-400 text-xs mb-3">Save 40% ($4.17/mo)</p>
-                <button
-                  onClick={() => handleUpgradeClick('annual')}
-                  className="btn-primary w-full text-sm"
-                >
-                  Get Annual Access
-                </button>
-              </div>
-
-              {/* Monthly Option */}
-              <div className="bg-dark-800 rounded-xl p-3 mb-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-left">
-                    <span className="font-bold">$6.99</span>
-                    <span className="text-dark-400 text-sm">/month</span>
-                    <p className="text-dark-500 text-xs">Cancel anytime</p>
-                  </div>
-                  <button
-                    onClick={() => handleUpgradeClick('monthly')}
-                    className="btn-secondary text-sm px-4"
-                  >
-                    Go Monthly
-                  </button>
-                </div>
-              </div>
-
-              {/* Features */}
-              <div className="text-left mb-4">
-                <p className="text-xs text-dark-500 uppercase tracking-wider mb-2">What you get:</p>
-                <ul className="text-sm text-dark-300 space-y-1.5">
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-400">✓</span>
-                    <span>Unlimited messages</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-400">✓</span>
-                    <span>Full Send Mode unlocked</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-400">✓</span>
-                    <span>No filter language (f-bombs, c-bombs)</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-400">✓</span>
-                    <span>All personality settings</span>
-                  </li>
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setShowPaywall(false)}
-                className="text-dark-500 text-xs hover:text-dark-300 transition-colors"
-              >
-                Maybe later
+                Get Annual Access
               </button>
             </div>
+
+            {/* Monthly Option */}
+            <div className="bg-dark-800 rounded-xl p-3 mb-4">
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <span className="font-bold">$6.99</span>
+                  <span className="text-dark-400 text-sm">/month</span>
+                  <p className="text-dark-500 text-xs">Cancel anytime</p>
+                </div>
+                <button
+                  onClick={() => handleUpgradeClick('monthly')}
+                  className="btn-secondary text-sm px-4"
+                >
+                  Go Monthly
+                </button>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="text-left mb-4">
+              <p className="text-xs text-dark-500 uppercase tracking-wider mb-2">What you get:</p>
+              <ul className="text-sm text-dark-300 space-y-1.5">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Unlimited messages</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>Unhinged Mode unlocked</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>No filter language (f-bombs, c-bombs)</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>All personality settings</span>
+                </li>
+              </ul>
+            </div>
+
+            <button
+              onClick={() => setShowPaywall(false)}
+              className="text-dark-500 text-xs hover:text-dark-300 transition-colors"
+            >
+              Maybe later
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

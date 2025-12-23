@@ -100,7 +100,7 @@ export default function AuthModal({ onClose }) {
           <div className="bg-gradient-to-r from-hottie-500/10 to-orange-500/10 border border-hottie-500/30 rounded-xl p-4 mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-5 h-5 text-hottie-400" />
-              <span className="font-bold">Unlock Full Send Mode</span>
+              <span className="font-bold">Unlock Unhinged Mode</span>
             </div>
             <p className="text-dark-400 text-sm mb-4">
               Go premium for unlimited messages, maximum savagery, and absolutely no filter.
@@ -171,7 +171,7 @@ export default function AuthModal({ onClose }) {
                 <span className="text-green-400">✓</span> Unlimited messages (no daily cap)
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-green-400">✓</span> Full Send Mode - maximum savagery
+                <span className="text-green-400">✓</span> Unhinged Mode - maximum savagery
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-green-400">✓</span> No filter language (f-bombs, c-bombs, the lot)
