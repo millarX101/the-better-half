@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { Send, ArrowLeft, AlertCircle, Flame } from 'lucide-react'
 import PersonalitySettings from './PersonalitySettings'
 
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_API_URL || 'https://toxic-hottie-api.onrender.com'
 
 const DEFAULT_PERSONALITY = {
   savagery: 50,    // 0 = gentle roast, 100 = brutal
