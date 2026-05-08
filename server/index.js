@@ -38,7 +38,7 @@ app.set('trust proxy', 1);
 const USE_ANTHROPIC = !!process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL = 'claude-3-5-haiku-20241022'; // Fast, cheap, follows instructions well
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001'; // Fast, cheap, follows instructions well
 
 // OpenRouter fallback
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
